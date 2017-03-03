@@ -1,0 +1,8 @@
+*
+
+! .gitignore
+! *.v
+! *.xpr
+! *.txt
+! *.xci
+! *.xdc
