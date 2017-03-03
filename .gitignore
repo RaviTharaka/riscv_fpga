@@ -6,3 +6,7 @@
 ! *.txt
 ! *.xci
 ! *.xdc
+
+# Verification Program #
+! *.c
+! *.dump
