@@ -129,9 +129,9 @@ module Test_Data_Cache ();
         ADDR_FROM_PROC = 0;
         DATA_FROM_PROC = 0;
                     
-        fileTrace = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Data_Cache/gcc.trac", "r");
-        fileResult = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Data_Cache/result.txt", "w");
-        $readmemh ("E:/University/GrandFinale/Project/Simulation_Traces/Data_Cache/Mem_init.in", memory);
+        fileTrace = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Data_Cache/gcc.trac", "r");
+        fileResult = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Data_Cache/result.txt", "w");
+        $readmemh ("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Data_Cache/Mem_init.in", memory);
         
         instruction_no = 1;
                  
@@ -149,7 +149,7 @@ module Test_Data_Cache ();
                 readTrace = $fscanf(fileTrace, "%x ", ADDR_FROM_PROC);
                 readTrace = $fscanf(fileTrace, "%x ", DATA_FROM_PROC);
                 if (control_from_proc_del_4 == 2'b01) begin
-                    fileResult = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Data_Cache/result.txt", "a");                        
+                    fileResult = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Data_Cache/result.txt", "a");                        
                     $fwrite(fileResult,"%x\n",DATA_TO_PROC);
                     $fclose(fileResult);
                 end
@@ -271,7 +271,7 @@ module Test_Data_Cache ();
                     ac = DATA_TO_L2[m * DATA_WIDTH +: DATA_WIDTH];
                 end
                 
-                writeFile = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Data_Cache/Output.trac", "a");
+                writeFile = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Data_Cache/Output.trac", "a");
                 $fwrite("%d \t %d \t%d \n", WR_ADDR_TO_L2, DATA_TO_L2, WR_CONTROL_TO_L2);  
                 $fclose(writeFile);     
             end    

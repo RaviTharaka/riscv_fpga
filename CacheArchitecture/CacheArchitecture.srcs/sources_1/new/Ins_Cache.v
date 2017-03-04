@@ -124,33 +124,35 @@ module Ins_Cache #(
     reg [B - T - 5       - 1 : 0] word_address_del_1,    word_address_del_2;
               
     always @(posedge CLK) begin
-        // Output regsiter for the cache architecture
-        if (CACHE_READY) begin
-            DATA_TO_PROC <= data_to_proc;
-        end         
-        
-        // Pipeline for previous address requests (processor level PC)
-        if (pc_pipe_enb) begin
-            case (pc_sel) 
-                2'b00 : pc <= pc + 4;
-                2'b01 : pc <= BRANCH_ADDR_IN;
-                default : pc <= pc_del_2;
-            endcase
-        
-            pc_del_1 <= pc;
-            pc_del_2 <= pc_del_1;
-        end   
-        
-        // Pipeline for internal address requests (cache level PC)
-        if (cache_pipe_enb) begin
-            tag_del_1             <= tag;
-            tag_del_2             <= tag_del_1;
-            section_address_del_1 <= section_address;
-            section_address_del_2 <= section_address_del_1;
-            word_address_del_1    <= word_address;
-            word_address_del_2    <= word_address_del_1;
-            tag_address_del_1     <= tag_address;
-            tag_address_del_2     <= tag_address_del_1;
+        if (PROC_READY) begin
+            // Output regsiter for the cache architecture
+            if (CACHE_READY) begin
+                DATA_TO_PROC <= data_to_proc;
+            end         
+            
+            // Pipeline for previous address requests (processor level PC)
+            if (pc_pipe_enb) begin
+                case (pc_sel) 
+                    2'b00 : pc <= pc + 4;
+                    2'b01 : pc <= BRANCH_ADDR_IN;
+                    default : pc <= pc_del_2;
+                endcase
+            
+                pc_del_1 <= pc;
+                pc_del_2 <= pc_del_1;
+            end   
+            
+            // Pipeline for internal address requests (cache level PC)
+            if (cache_pipe_enb) begin
+                tag_del_1             <= tag;
+                tag_del_2             <= tag_del_1;
+                section_address_del_1 <= section_address;
+                section_address_del_2 <= section_address_del_1;
+                word_address_del_1    <= word_address;
+                word_address_del_2    <= word_address_del_1;
+                tag_address_del_1     <= tag_address;
+                tag_address_del_2     <= tag_address_del_1;
+            end
         end
     end
             
@@ -201,19 +203,19 @@ module Ins_Cache #(
                 .INIT_FILE("")                          // Specify name/location of RAM initialization file if using one (leave blank if not)
             ) tag_memory (
                 .CLK(CLK),                                                  // Clock
-                .WR_ENB(tag_mem_wr_enb[i]),                                 // Write enable
+                .WR_ENB(tag_mem_wr_enb[i] & PROC_READY),                    // Write enable
                 .ADDR_W(tag_mem_wr_addr),                                   // Write address bus, width determined from RAM_DEPTH
                 .DATA_IN({tag_valid_to_ram, tag_to_ram}),                   // RAM input data, width determined from RAM_WIDTH
-                .RD_ENB(tag_mem_rd_enb),                                    // Read Enable, for additional power savings, disable when not in use
+                .RD_ENB(tag_mem_rd_enb & PROC_READY),                       // Read Enable, for additional power savings, disable when not in use
                 .ADDR_R(tag_address),                                       // Read address bus, width determined from RAM_DEPTH
                 .DATA_OUT({tag_valid_from_ram[i], tag_from_ram[i]}),        // RAM output data, width determined from RAM_WIDTH
                 .OUT_RST(1'b0),                                             // Output reset (does not affect memory contents)
-                .OUT_ENB(1'b1)                                              // Output register enable
+                .OUT_ENB(PROC_READY)                                        // Output register enable
             );
             
             // Tag comparison and validness checking
             always @(posedge CLK) begin
-                if (cache_pipe_enb) begin
+                if (cache_pipe_enb & PROC_READY) begin
                     tag_match[i] <= (tag_del_1 == tag_from_ram[i]);
                     tag_valid[i] <= tag_valid_wire[i];
                 end
@@ -234,15 +236,15 @@ module Ins_Cache #(
                 .RAM_PERFORMANCE("HIGH_PERFORMANCE"),   // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
                 .INIT_FILE("")                          // Specify name/location of RAM initialization file if using one (leave blank if not)
             ) line_memory (
-                .CLK(CLK),                         // Clock
-                .WR_ENB(lin_mem_wr_enb[i]),        // Write enable
-                .ADDR_W(lin_mem_wr_addr),          // Write address bus, width determined from RAM_DEPTH
-                .DATA_IN(lin_mem_data_in),         // RAM input data, width determined from RAM_WIDTH
-                .RD_ENB(lin_mem_rd_enb),           // Read Enable, for additional power savings, disable when not in use
-                .ADDR_R(line_address),             // Read address bus, width determined from RAM_DEPTH
-                .DATA_OUT(lin_data_out[i]),        // RAM output data, width determined from RAM_WIDTH
-                .OUT_RST(1'b0),                    // Output reset (does not affect memory contents)
-                .OUT_ENB(1'b1)                     // Output register enable
+                .CLK(CLK),                                  // Clock
+                .WR_ENB(lin_mem_wr_enb[i] & PROC_READY),    // Write enable
+                .ADDR_W(lin_mem_wr_addr),                   // Write address bus, width determined from RAM_DEPTH
+                .DATA_IN(lin_mem_data_in),                  // RAM input data, width determined from RAM_WIDTH
+                .RD_ENB(lin_mem_rd_enb & PROC_READY),       // Read Enable, for additional power savings, disable when not in use
+                .ADDR_R(line_address),                      // Read address bus, width determined from RAM_DEPTH
+                .DATA_OUT(lin_data_out[i]),                 // RAM output data, width determined from RAM_WIDTH
+                .OUT_RST(1'b0),                             // Output reset (does not affect memory contents)
+                .OUT_ENB(PROC_READY)                        // Output register enable
             );
             
             Multiplexer #(
@@ -315,8 +317,8 @@ module Ins_Cache #(
         .WIDTH(ADDR_WIDTH - 2)
     ) fetch_queue (
         .CLK(CLK),
-        .TOP_VALID(send_addr_to_L2),
-        .BOT_READY(addr_to_L2_ready),
+        .TOP_VALID(send_addr_to_L2 & PROC_READY),
+        .BOT_READY(addr_to_L2_ready & PROC_READY),
         .DATA_IN({tag_del_2, tag_address_del_2, section_address_del_2, word_address_del_2}),
         .DATA_OUT(fetch_queue_out),
         .EMPTY(fetch_queue_empty)
@@ -329,8 +331,8 @@ module Ins_Cache #(
     ) prefetch_queue (
         .CLK(CLK),
         .RSTN(RSTN),
-        .WR_ENB(prefetch_queue_wr_enb),
-        .RD_ENB(!prefetch_queue_empty & addr_to_L2_ready & fetch_queue_empty & !send_addr_to_L2),
+        .WR_ENB(prefetch_queue_wr_enb & PROC_READY),
+        .RD_ENB(!prefetch_queue_empty & addr_to_L2_ready & fetch_queue_empty & !send_addr_to_L2 & PROC_READY),
         .FULL(prefetch_queue_full),
         .EMPTY(prefetch_queue_empty),
         .DATA_IN({prefetch_queue_src_in, prefetch_queue_addr_in}),
@@ -354,21 +356,23 @@ module Ins_Cache #(
     assign addr_to_L2_valid = (send_addr_to_L2 | !fetch_queue_empty | !prefetch_queue_empty);
             
     always @(posedge CLK) begin
-        // Output address register for the L2 cache
-        if ((addr_to_L2_valid & ADDR_TO_L2_READY) | (!addr_to_L2_full & addr_to_L2_valid)) begin
-            ADDR_TO_L2     <= addr_to_L2;
-            addr_to_L2_src <= (addr_to_L2_sel == 2)? prefetch_queue_src_out : 0;
-        end
-        
-        // Valid signal for the L2 cache address stream
-        if (addr_to_L2_valid) begin
-            addr_to_L2_full <= 1;
-        end else if (ADDR_TO_L2_READY) begin 
-            addr_to_L2_full <= 0;
+        if (PROC_READY) begin
+            // Output address register for the L2 cache
+            if ((addr_to_L2_valid & ADDR_TO_L2_READY) | (!addr_to_L2_full & addr_to_L2_valid)) begin
+                ADDR_TO_L2     <= addr_to_L2;
+                addr_to_L2_src <= (addr_to_L2_sel == 2)? prefetch_queue_src_out : 0;
+            end
+            
+            // Valid signal for the L2 cache address stream
+            if (addr_to_L2_valid) begin
+                addr_to_L2_full <= 1;
+            end else if (ADDR_TO_L2_READY) begin 
+                addr_to_L2_full <= 0;
+            end
         end
     end
     
-    assign ADDR_TO_L2_VALID = addr_to_L2_full;
+    assign ADDR_TO_L2_VALID = addr_to_L2_full & PROC_READY;
     assign addr_to_L2_ready = !addr_to_L2_full | ADDR_TO_L2_READY;
     
     
@@ -390,8 +394,8 @@ module Ins_Cache #(
     ) ongoing_L2_queue (
         .CLK(CLK),
         .RSTN(RSTN),
-        .WR_ENB(ongoing_queue_wr_enb),
-        .RD_ENB(ongoing_queue_rd_enb),
+        .WR_ENB(ongoing_queue_wr_enb & PROC_READY),
+        .RD_ENB(ongoing_queue_rd_enb & PROC_READY),
         .FULL(ongoing_queue_full),
         .EMPTY(ongoing_queue_empty),
         .DATA_IN(addr_to_L2_src),
@@ -408,9 +412,11 @@ module Ins_Cache #(
     // Buffer for storing data from L2, until they are read into the Stream Buffers or Line RAMs
     integer j;        
     always @(posedge CLK) begin
-        for (j = 0; j < LINE_RAM_WIDTH / L2_BUS_WIDTH; j = j + 1) begin
-            if (data_from_L2_buffer_enb[j]) begin
-                data_from_L2_buffer[j * L2_BUS_WIDTH +: L2_BUS_WIDTH] <= DATA_FROM_L2;  
+        if (PROC_READY) begin
+            for (j = 0; j < LINE_RAM_WIDTH / L2_BUS_WIDTH; j = j + 1) begin
+                if (data_from_L2_buffer_enb[j]) begin
+                    data_from_L2_buffer[j * L2_BUS_WIDTH +: L2_BUS_WIDTH] <= DATA_FROM_L2;  
+                end
             end
         end
     end
@@ -426,6 +432,7 @@ module Ins_Cache #(
         .BUFFER_WIDTH(LINE_RAM_WIDTH)
     ) data_from_L2_buffer_control (
         .CLK(CLK),
+        .ENB(PROC_READY),
         .DATA_FROM_L2_READY(DATA_FROM_L2_READY),
         .DATA_FROM_L2_VALID(DATA_FROM_L2_VALID),
         .DATA_FROM_L2_BUFFER_READY(data_from_L2_buffer_ready),
@@ -455,8 +462,8 @@ module Ins_Cache #(
                 .CLK(CLK),
                 .RESET(stream_buf_reset[i]),
                 .SECTION_SEL(stream_buf_section_sel),
-                .WR_ENB(stream_buf_wr_enb[i]),
-                .RD_ENB(stream_buf_rd_enb[i]),
+                .WR_ENB(stream_buf_wr_enb[i] & PROC_READY),
+                .RD_ENB(stream_buf_rd_enb[i] & PROC_READY),
                 .FULL(stream_buf_full[i]),
                 .EMPTY(stream_buf_empty[i]),
                 .DATA_IN(data_from_L2_buffer),
@@ -469,9 +476,11 @@ module Ins_Cache #(
     // Temporary
     reg x,y,z;
     always @(posedge CLK) begin
-       x <= cache_hit;
-       y <= x;
-       z <= y;
+       if (PROC_READY) begin
+           x <= cache_hit;
+           y <= x;
+           z <= y;
+       end
     end   
     initial begin
        x = 1;
@@ -489,6 +498,7 @@ module Ins_Cache #(
         .T(T)
     ) stream_buffer_control (
         .CLK(CLK),
+        .ENB(PROC_READY),
         // Data from L2 buffer 
         .DATA_FROM_L2_SRC(data_from_L2_src),
         .DATA_FROM_L2_BUFFER_READY(stream_buffer_ready),
@@ -537,6 +547,7 @@ module Ins_Cache #(
         .T(T)
     ) refill_control (
         .CLK(CLK),
+        .ENB(PROC_READY),
         // Outputs to the main processor pipeline		
         .CACHE_READY(CACHE_READY),                          // Signal from cache to processor that its pipeline is currently ready to work  
         // Hit miss status 

@@ -99,8 +99,8 @@ module Test_Ins_Cache ();
         PC_no        = 0;
         l2_ready     = 1;
         
-        fileTrace    = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Instruction_Cache/trace.txt", "r");
-        fileResult   = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Instruction_Cache/result.txt", "w");
+        fileTrace    = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Instruction_Cache/trace.txt", "r");
+        fileResult   = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Instruction_Cache/result.txt", "w");
         #106;
         
         RSTN         = 1;
@@ -112,13 +112,18 @@ module Test_Ins_Cache ();
         for (i = 0; i > -1; i = i + 1) begin
             if (read_address) begin
                 readTrace  = $fscanf(fileTrace, "%x ", BRANCH_ADDR_IN);
-                fileResult = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Instruction_Cache/result.txt", "a");                        
+                fileResult = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/Instruction_Cache/result.txt", "a");                        
                 $fwrite(fileResult,"%x\n",DATA_TO_PROC);
                 $fclose(fileResult);
                 
                 PC_no      = PC_no + 1;
             end
             #10;
+            if (i % 20 == 0) begin
+                PROC_READY = 0;     
+            end else begin
+                PROC_READY = 1;
+            end
         end 
         
     end

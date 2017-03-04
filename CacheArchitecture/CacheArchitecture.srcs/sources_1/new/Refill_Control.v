@@ -40,7 +40,8 @@ module Refill_Control_I #(
         localparam LINE_ADDR_WIDTH  = S - a - B + T
     ) (
         input                           CLK,
-        
+        input                           ENB,
+                
         // Outputs to the main processor pipeline		
         output CACHE_READY,                                             // Signal from cache to processor that its pipeline is currently ready to work     
         
@@ -103,13 +104,15 @@ module Refill_Control_I #(
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // Temporary - cycle destinations among the available sets
     reg [ASSOCIATIVITY - 1 : 0] refill_req_dst = 2, refill_req_dst_del_1 = 1;
-    always @(posedge CLK) begin                                                                             
-        if (admit) begin
-            if (refill_req_dst [ASSOCIATIVITY - 1])
-                refill_req_dst <= 1;
-            else
-                refill_req_dst <= refill_req_dst << 1;    
-            refill_req_dst_del_1 <= refill_req_dst;
+    always @(posedge CLK) begin             
+        if (ENB) begin
+            if (admit) begin
+                if (refill_req_dst [ASSOCIATIVITY - 1])
+                    refill_req_dst <= 1;
+                else
+                    refill_req_dst <= refill_req_dst << 1;    
+                refill_req_dst_del_1 <= refill_req_dst;
+            end
         end
     end         
     
@@ -146,10 +149,12 @@ module Refill_Control_I #(
     reg         pc_admissible;
     
     always @(posedge CLK) begin
-        pc_pipe_enb_del_1 <= PC_PIPE_ENB;
-        pc_sel_del_1      <= PC_SEL;
-        pc_sel_del_2      <= pc_sel_del_1;
-        pc_admissible     <= pc_pipe_enb_del_1 & (pc_sel_del_2 == 2'b00 | pc_sel_del_2 == 2'b01);
+        if (ENB) begin
+            pc_pipe_enb_del_1 <= PC_PIPE_ENB;
+            pc_sel_del_1      <= PC_SEL;
+            pc_sel_del_2      <= pc_sel_del_1;
+            pc_admissible     <= pc_pipe_enb_del_1 & (pc_sel_del_2 == 2'b00 | pc_sel_del_2 == 2'b01);
+        end
     end    
     
     // Whether to admit to or remove from the refill queue
@@ -161,7 +166,9 @@ module Refill_Control_I #(
     reg [3 : 0] no_of_elements, no_of_elements_wire;
     
     always @(posedge CLK) begin
-        no_of_elements <= no_of_elements_wire;
+        if (ENB) begin
+            no_of_elements <= no_of_elements_wire;
+        end
     end
     
     always @(*) begin
@@ -280,29 +287,31 @@ module Refill_Control_I #(
     end
     
     always @(posedge CLK) begin
-        cur_tag  <= cur_tag_wire;
-        cur_line <= cur_line_wire;
-        cur_sect <= cur_sect_wire;
-        cur_src  <= cur_src_wire;
-        cur_set  <= cur_set_wire;
-        
-        fir_tag  <= fir_tag_wire;
-        fir_line <= fir_line_wire;
-        fir_sect <= fir_sect_wire;
-        fir_src  <= fir_src_wire;
-        fir_set  <= fir_set_wire;
-        
-        sec_tag  <= sec_tag_wire;
-        sec_line <= sec_line_wire;
-        sec_sect <= sec_sect_wire;
-        sec_src  <= sec_src_wire;
-        sec_set  <= sec_set_wire;
-        
-        thr_tag  <= thr_tag_wire;
-        thr_line <= thr_line_wire;
-        thr_sect <= thr_sect_wire;
-        thr_src  <= thr_src_wire;
-        thr_set  <= thr_set_wire;
+        if (ENB) begin
+            cur_tag  <= cur_tag_wire;
+            cur_line <= cur_line_wire;
+            cur_sect <= cur_sect_wire;
+            cur_src  <= cur_src_wire;
+            cur_set  <= cur_set_wire;
+            
+            fir_tag  <= fir_tag_wire;
+            fir_line <= fir_line_wire;
+            fir_sect <= fir_sect_wire;
+            fir_src  <= fir_src_wire;
+            fir_set  <= fir_set_wire;
+            
+            sec_tag  <= sec_tag_wire;
+            sec_line <= sec_line_wire;
+            sec_sect <= sec_sect_wire;
+            sec_src  <= sec_src_wire;
+            sec_set  <= sec_set_wire;
+            
+            thr_tag  <= thr_tag_wire;
+            thr_line <= thr_line_wire;
+            thr_sect <= thr_sect_wire;
+            thr_src  <= thr_src_wire;
+            thr_set  <= thr_set_wire;
+        end
     end
     
     
@@ -450,60 +459,62 @@ module Refill_Control_I #(
     reg equal_n0, equal_n1, equal_n2;
     
     always @(posedge CLK) begin
-        case ({admit, remove})
-            2'b10 : begin
-                line_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0000)? line_eq_pcs : line_eq_cur);
-                line_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0001)? line_eq_pcs : line_eq_fir);
-                line_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0011)? line_eq_pcs : line_eq_sec);
-                
-                dst_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0000)? dst_eq_pcs : dst_eq_cur);
-                dst_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0001)? dst_eq_pcs : dst_eq_fir);
-                dst_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0011)? dst_eq_pcs : dst_eq_sec);
-                
-                equal_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0000)? equal_pcs : equal_cur);
-                equal_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0001)? equal_pcs : equal_fir);
-                equal_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0011)? equal_pcs : equal_sec);                
-            end
-            2'b01 : begin
-                line_eq_n0 <= no_of_elements_wire[0] & line_eq_fir;
-                line_eq_n1 <= no_of_elements_wire[1] & line_eq_sec;
-                line_eq_n2 <= no_of_elements_wire[2] & line_eq_thr;
-                
-                dst_eq_n0 <= no_of_elements_wire[0] & dst_eq_fir;
-                dst_eq_n1 <= no_of_elements_wire[1] & dst_eq_sec;
-                dst_eq_n2 <= no_of_elements_wire[2] & dst_eq_thr;
-                
-                equal_n0 <= no_of_elements_wire[0] & equal_fir;
-                equal_n1 <= no_of_elements_wire[1] & equal_sec;
-                equal_n2 <= no_of_elements_wire[2] & equal_thr;
-            end
-            2'b11 : begin
-                line_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0001)? line_eq_pcs : line_eq_fir);
-                line_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0011)? line_eq_pcs : line_eq_sec);
-                line_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0111)? line_eq_pcs : line_eq_thr);
-                
-                dst_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0001)? dst_eq_pcs : dst_eq_fir);
-                dst_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0011)? dst_eq_pcs : dst_eq_sec);
-                dst_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0111)? dst_eq_pcs : dst_eq_thr);
-                
-                equal_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0001)? equal_pcs : equal_fir);
-                equal_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0011)? equal_pcs : equal_sec);
-                equal_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0111)? equal_pcs : equal_thr);
-            end
-            2'b00 : begin 
-                line_eq_n0 <= no_of_elements_wire[0] & line_eq_cur;
-                line_eq_n1 <= no_of_elements_wire[1] & line_eq_fir;
-                line_eq_n2 <= no_of_elements_wire[2] & line_eq_sec;
-                
-                dst_eq_n0 <= no_of_elements_wire[0] & dst_eq_cur;
-                dst_eq_n1 <= no_of_elements_wire[1] & dst_eq_fir;
-                dst_eq_n2 <= no_of_elements_wire[2] & dst_eq_sec;
-                
-                equal_n0 <= no_of_elements_wire[0] & equal_cur;
-                equal_n1 <= no_of_elements_wire[1] & equal_fir;
-                equal_n2 <= no_of_elements_wire[2] & equal_sec;
-            end
-        endcase    
+        if (ENB) begin
+            case ({admit, remove})
+                2'b10 : begin
+                    line_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0000)? line_eq_pcs : line_eq_cur);
+                    line_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0001)? line_eq_pcs : line_eq_fir);
+                    line_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0011)? line_eq_pcs : line_eq_sec);
+                    
+                    dst_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0000)? dst_eq_pcs : dst_eq_cur);
+                    dst_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0001)? dst_eq_pcs : dst_eq_fir);
+                    dst_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0011)? dst_eq_pcs : dst_eq_sec);
+                    
+                    equal_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0000)? equal_pcs : equal_cur);
+                    equal_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0001)? equal_pcs : equal_fir);
+                    equal_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0011)? equal_pcs : equal_sec);                
+                end
+                2'b01 : begin
+                    line_eq_n0 <= no_of_elements_wire[0] & line_eq_fir;
+                    line_eq_n1 <= no_of_elements_wire[1] & line_eq_sec;
+                    line_eq_n2 <= no_of_elements_wire[2] & line_eq_thr;
+                    
+                    dst_eq_n0 <= no_of_elements_wire[0] & dst_eq_fir;
+                    dst_eq_n1 <= no_of_elements_wire[1] & dst_eq_sec;
+                    dst_eq_n2 <= no_of_elements_wire[2] & dst_eq_thr;
+                    
+                    equal_n0 <= no_of_elements_wire[0] & equal_fir;
+                    equal_n1 <= no_of_elements_wire[1] & equal_sec;
+                    equal_n2 <= no_of_elements_wire[2] & equal_thr;
+                end
+                2'b11 : begin
+                    line_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0001)? line_eq_pcs : line_eq_fir);
+                    line_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0011)? line_eq_pcs : line_eq_sec);
+                    line_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0111)? line_eq_pcs : line_eq_thr);
+                    
+                    dst_eq_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0001)? dst_eq_pcs : dst_eq_fir);
+                    dst_eq_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0011)? dst_eq_pcs : dst_eq_sec);
+                    dst_eq_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0111)? dst_eq_pcs : dst_eq_thr);
+                    
+                    equal_n0 <= no_of_elements_wire[0] & ((no_of_elements == 4'b0001)? equal_pcs : equal_fir);
+                    equal_n1 <= no_of_elements_wire[1] & ((no_of_elements == 4'b0011)? equal_pcs : equal_sec);
+                    equal_n2 <= no_of_elements_wire[2] & ((no_of_elements == 4'b0111)? equal_pcs : equal_thr);
+                end
+                2'b00 : begin 
+                    line_eq_n0 <= no_of_elements_wire[0] & line_eq_cur;
+                    line_eq_n1 <= no_of_elements_wire[1] & line_eq_fir;
+                    line_eq_n2 <= no_of_elements_wire[2] & line_eq_sec;
+                    
+                    dst_eq_n0 <= no_of_elements_wire[0] & dst_eq_cur;
+                    dst_eq_n1 <= no_of_elements_wire[1] & dst_eq_fir;
+                    dst_eq_n2 <= no_of_elements_wire[2] & dst_eq_sec;
+                    
+                    equal_n0 <= no_of_elements_wire[0] & equal_cur;
+                    equal_n1 <= no_of_elements_wire[1] & equal_fir;
+                    equal_n2 <= no_of_elements_wire[2] & equal_sec;
+                end
+            endcase
+        end
     end   
     
     wire clash_n0, clash_n1, clash_n2;
@@ -693,9 +704,11 @@ module Refill_Control_I #(
     end
     
     always @(posedge CLK) begin
-        no_completed      <= no_completed_wire;
-        refill_state      <= refill_state_wire;
-        commited_sections <= commited_sections_wire;
+        if (ENB) begin
+            no_completed      <= no_completed_wire;
+            refill_state      <= refill_state_wire;
+            commited_sections <= commited_sections_wire;
+        end
     end
     
     assign remove = ((refill_state == WRITING_SB  ) & (no_completed == {T{1'b1}}) & (critical_used | critical_use)) |
@@ -784,66 +797,72 @@ module Refill_Control_I #(
     assign critical_use = equal_n0 & CACHE_HIT & pc_state == PC2;        
             
     always @(posedge CLK) begin
-        case ({critical_ready, critical_use}) 
-            2'b00 : critical_used <= critical_used;
-            2'b01 : critical_used <= 1'b1;
-            2'b10 : critical_used <= 1'b0;
-            2'b11 : critical_used <= critical_used;
-        endcase
+        if (ENB) begin
+            case ({critical_ready, critical_use}) 
+                2'b00 : critical_used <= critical_used;
+                2'b01 : critical_used <= 1'b1;
+                2'b10 : critical_used <= 1'b0;
+                2'b11 : critical_used <= critical_used;
+            endcase
+        end
     end 
     
     always @(posedge CLK) begin
-        case (pc_state) 
-            HITTING : begin
-                case ({STREAM_HIT, CACHE_HIT})
-                    2'b00 : pc_state <= PC0;
-                    2'b01 : pc_state <= HITTING;
-                    2'b10 : pc_state <= PC0;
-                    2'b11 : pc_state <= HITTING;
-                endcase
-            end
-            
-            WAIT : begin
-                if (critical_ready | critical_used == 0)  // | (CACHE_HIT & pc_state_del_2 == WAIT)
-                    pc_state <= PC0;
-            end
-            
-            PC0 : pc_state <= PC1;
-            PC1 : pc_state <= PC2;
-            
-            PC2 : begin
-                if (CACHE_HIT)        
-                    if (no_of_elements == 1) 
-                        pc_state <= HITTING;
-                    else 
-                        pc_state <= TRANSIT;
-                else
-                    pc_state <= PC0; 
-            end
-            
-            TRANSIT : begin
-                if (no_of_elements == 0) begin
+        if (ENB) begin
+            case (pc_state) 
+                HITTING : begin
                     case ({STREAM_HIT, CACHE_HIT})
-                        2'b00 : pc_state <= WAIT;
+                        2'b00 : pc_state <= PC0;
                         2'b01 : pc_state <= HITTING;
                         2'b10 : pc_state <= PC0;
                         2'b11 : pc_state <= HITTING;
                     endcase
-                end else begin 
-                    case ({STREAM_HIT, CACHE_HIT})
-                        2'b00 : pc_state <= (critical_used != 0 | critical_ready)? PC0 : WAIT;
-                        2'b01 : pc_state <= TRANSIT;
-                        2'b10 : pc_state <= (critical_used != 0 | critical_ready)? PC0 : WAIT;
-                        2'b11 : pc_state <= TRANSIT;
-                    endcase
                 end
-            end
-        endcase
+                
+                WAIT : begin
+                    if (critical_ready | critical_used == 0)  // | (CACHE_HIT & pc_state_del_2 == WAIT)
+                        pc_state <= PC0;
+                end
+                
+                PC0 : pc_state <= PC1;
+                PC1 : pc_state <= PC2;
+                
+                PC2 : begin
+                    if (CACHE_HIT)        
+                        if (no_of_elements == 1) 
+                            pc_state <= HITTING;
+                        else 
+                            pc_state <= TRANSIT;
+                    else
+                        pc_state <= PC0; 
+                end
+                
+                TRANSIT : begin
+                    if (no_of_elements == 0) begin
+                        case ({STREAM_HIT, CACHE_HIT})
+                            2'b00 : pc_state <= WAIT;
+                            2'b01 : pc_state <= HITTING;
+                            2'b10 : pc_state <= PC0;
+                            2'b11 : pc_state <= HITTING;
+                        endcase
+                    end else begin 
+                        case ({STREAM_HIT, CACHE_HIT})
+                            2'b00 : pc_state <= (critical_used != 0 | critical_ready)? PC0 : WAIT;
+                            2'b01 : pc_state <= TRANSIT;
+                            2'b10 : pc_state <= (critical_used != 0 | critical_ready)? PC0 : WAIT;
+                            2'b11 : pc_state <= TRANSIT;
+                        endcase
+                    end
+                end
+            endcase
+        end
     end 
     
     always @(posedge CLK) begin
-        pc_state_del_1 <= pc_state;
-        pc_state_del_2 <= pc_state_del_1;
+        if (ENB) begin
+            pc_state_del_1 <= pc_state;
+            pc_state_del_2 <= pc_state_del_1;
+        end
     end
         
     // Enabling the PC pipeline 

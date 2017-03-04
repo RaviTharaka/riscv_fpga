@@ -27,6 +27,7 @@ module Stream_Buffer_Single_Control #(
         parameter n          = 1                                    // Depth of stream buffers would be 2^n    
     ) (
         input                           CLK,
+        input                           ENB,
         // Stream buffer initializations
         input                           BUFFER_RESET,               // Reset the stream buffer
         input      [ADDR_WIDTH - 1 : 0] INIT_TOQ_VALUE,             // New stream the buffer is assigned to
@@ -52,24 +53,30 @@ module Stream_Buffer_Single_Control #(
     
     // Hit miss status of the stream buffer
     always @(posedge CLK) begin
-        STREAM_BUFFER_HIT <= (ADDR_IN == top_of_queue) & (!commit_counter[p + 1]) & (commit_counter != 0) & !BUFFER_RESET;
+        if (ENB) begin
+            STREAM_BUFFER_HIT <= (ADDR_IN == top_of_queue) & (!commit_counter[p + 1]) & (commit_counter != 0) & !BUFFER_RESET;
+        end
     end    
     
     // Next request to be sent to L2 to fill the stream buffer
     always @(posedge CLK) begin
-        if (BUFFER_RESET) begin
-            NEXT_REQ <= INIT_TOQ_VALUE;
-        end else begin
-            NEXT_REQ <= request_counter + top_of_queue;
+        if (ENB) begin
+            if (BUFFER_RESET) begin
+                NEXT_REQ <= INIT_TOQ_VALUE;
+            end else begin
+                NEXT_REQ <= request_counter + top_of_queue;
+            end
         end
     end
     
     // Top of queue management
     always @(posedge CLK) begin
-        if (BUFFER_RESET) begin
-            top_of_queue <= INIT_TOQ_VALUE;
-        end else if (HIT_COMMIT) begin
-            top_of_queue <= top_of_queue + 1;
+        if (ENB) begin
+            if (BUFFER_RESET) begin
+                top_of_queue <= INIT_TOQ_VALUE;
+            end else if (HIT_COMMIT) begin
+                top_of_queue <= top_of_queue + 1;
+            end
         end
     end  
     
@@ -88,27 +95,31 @@ module Stream_Buffer_Single_Control #(
     end
     
     always @(posedge CLK) begin
-        if (BUFFER_RESET) begin
-            request_counter <= 0;
-        end else begin
-            request_counter <= request_counter_wire;
+        if (ENB) begin
+            if (BUFFER_RESET) begin
+                request_counter <= 0;
+            end else begin
+                request_counter <= request_counter_wire;
+            end
         end
     end
     
     // Commit counter management
     always @(posedge CLK) begin
-        if (BUFFER_RESET) begin
-            if (PREFETCH_COMMITED)
-                commit_counter <= commit_counter - {{(p + 2 - n){1'b0}}, request_counter_wire} + 1;
-            else    
-                commit_counter <= commit_counter - {{(p + 2 - n){1'b0}}, request_counter_wire};
-        end else begin
-            case ({PREFETCH_COMMITED, HIT_COMMIT})
-                2'b00 : commit_counter <= commit_counter;    
-                2'b10 : commit_counter <= commit_counter + 1;
-                2'b01 : commit_counter <= commit_counter - 1;
-                2'b11 : commit_counter <= commit_counter;
-            endcase
+        if (ENB) begin
+            if (BUFFER_RESET) begin
+                if (PREFETCH_COMMITED)
+                    commit_counter <= commit_counter - {{(p + 2 - n){1'b0}}, request_counter_wire} + 1;
+                else    
+                    commit_counter <= commit_counter - {{(p + 2 - n){1'b0}}, request_counter_wire};
+            end else begin
+                case ({PREFETCH_COMMITED, HIT_COMMIT})
+                    2'b00 : commit_counter <= commit_counter;    
+                    2'b10 : commit_counter <= commit_counter + 1;
+                    2'b01 : commit_counter <= commit_counter - 1;
+                    2'b11 : commit_counter <= commit_counter;
+                endcase
+            end
         end
     end
     

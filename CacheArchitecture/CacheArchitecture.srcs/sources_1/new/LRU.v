@@ -24,6 +24,7 @@ module LRU #(
         parameter N = 3                 // Number of units
     ) (
         input CLK,
+        input ENB,
         input [0 : N - 1] USE,
         output reg [N - 1 : 0] LRU
     );
@@ -39,14 +40,16 @@ module LRU #(
     
     integer row, col;
     always @(posedge CLK) begin
-        for (row = 0; row < N; row = row + 1) begin
-            for (col = 0; col < N; col = col + 1) begin
-                case ({USE[row], USE[col]})
-                    2'b00 : memory[row][col] <= memory[row][col];
-                    2'b01 : memory[row][col] <= 1'b0;
-                    2'b10 : memory[row][col] <= 1'b1;
-                    2'b11 : memory[row][col] <= 1'b0;
-                endcase
+        if (ENB) begin
+            for (row = 0; row < N; row = row + 1) begin
+                for (col = 0; col < N; col = col + 1) begin
+                    case ({USE[row], USE[col]})
+                        2'b00 : memory[row][col] <= memory[row][col];
+                        2'b01 : memory[row][col] <= 1'b0;
+                        2'b10 : memory[row][col] <= 1'b1;
+                        2'b11 : memory[row][col] <= 1'b0;
+                    endcase
+                end
             end
         end
     end

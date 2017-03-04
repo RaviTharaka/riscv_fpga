@@ -26,6 +26,7 @@ module Data_From_L2_Buffer_Control #(
         parameter BUFFER_WIDTH = 128
     ) (
         input CLK,
+        input ENB,
         
         input DATA_FROM_L2_VALID,
         output DATA_FROM_L2_READY,
@@ -40,19 +41,21 @@ module Data_From_L2_Buffer_Control #(
     
     assign DATA_FROM_L2_BUFFER_ENB = (state == 0)? ((DATA_FROM_L2_BUFFER_READY & DATA_FROM_L2_VALID)? 1 : 0) : state;
     assign DATA_FROM_L2_BUFFER_VALID = (state == 0);
-    assign DATA_FROM_L2_READY = (state == 0) ? DATA_FROM_L2_BUFFER_READY : 1'b1;
+    assign DATA_FROM_L2_READY = ENB & ((state == 0) ? DATA_FROM_L2_BUFFER_READY : 1'b1);
     
     always @(posedge CLK) begin
-        if (state == 0) begin
-            if (DATA_FROM_L2_BUFFER_READY) begin
-                if (DATA_FROM_L2_VALID)
-                    state <= 2;
-                else 
-                    state <= 1;    
-            end             
-        end else begin 
-            if (DATA_FROM_L2_VALID) begin
-                state <= state << 1;
+        if (ENB) begin
+            if (state == 0) begin
+                if (DATA_FROM_L2_BUFFER_READY) begin
+                    if (DATA_FROM_L2_VALID)
+                        state <= 2;
+                    else 
+                        state <= 1;    
+                end             
+            end else begin 
+                if (DATA_FROM_L2_VALID) begin
+                    state <= state << 1;
+                end
             end
         end
     end

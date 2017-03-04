@@ -33,6 +33,7 @@ module Stream_Buffer_Control #(
                 
     ) (
         input                                 CLK,
+        input                                 ENB,
         
         // Data in for the stream buffers
         input      [STREAM_SEL_BITS  - 1 : 0] DATA_FROM_L2_SRC,           // From which source the current L2 data comes 
@@ -74,15 +75,19 @@ module Stream_Buffer_Control #(
     // Hits if any of the stream buffers have a hit
     wire [N - 1 : 0] stream_buf_hit;  
     always @(posedge CLK) begin
-        HIT <= |(stream_buf_hit & ~buffer_reset);
+        if (ENB) begin
+            HIT <= |(stream_buf_hit & ~buffer_reset);
+        end
     end
     
     // HIT_BUF_NO is the highest numbered buffer that has the required Cache Line
     integer j;
     always @(posedge CLK) begin
-        for (j = 0; j < N; j = j + 1) begin
-            if (stream_buf_hit[j]) begin
-                HIT_BUF_NO <= j + 1;
+        if (ENB) begin
+            for (j = 0; j < N; j = j + 1) begin
+                if (stream_buf_hit[j]) begin
+                    HIT_BUF_NO <= j + 1;
+                end
             end
         end
     end     
@@ -90,32 +95,40 @@ module Stream_Buffer_Control #(
     // FSM for stream buffer output
     reg [T - 1 : 0] output_state; 
     always @(posedge CLK) begin
-        if (SECTION_COMMIT) begin
-            output_state <= output_state + 1;
+        if (ENB) begin 
+            if (SECTION_COMMIT) begin
+                output_state <= output_state + 1;
+            end
         end
     end
     
     // Which stream buffer is writing right now
     reg [N - 1 : 0] output_buffer;
     always @(posedge CLK) begin
-        if (SECTION_COMMIT & output_state == 0) begin
-            output_buffer <= stream_buf_hit;
+        if (ENB) begin
+            if (SECTION_COMMIT & output_state == 0) begin
+                output_buffer <= stream_buf_hit;
+            end
         end
     end
     
     // Delay the section address of PC one cycle
     reg [T - 1 : 0] section_delayed;
     always @(posedge CLK) begin
-        section_delayed <= PC_IN[0 +: T];
+        if (ENB) begin
+            section_delayed <= PC_IN[0 +: T];
+        end
     end
     
     // Currently primed section
     wire current_section_enb = (output_state == 0 & !SECTION_COMMIT) | (output_state == N & SECTION_COMMIT);
     reg [T - 1 : 0] current_section;
     always @(posedge CLK) begin
-        if (current_section_enb) begin
-            current_section <= section_delayed;
-        end 
+        if (ENB) begin
+            if (current_section_enb) begin
+                current_section <= section_delayed;
+            end 
+        end
     end
     
     // Section select for the stream buffers
@@ -137,9 +150,11 @@ module Stream_Buffer_Control #(
     // FSM for stream buffer input
     reg [T - 1 : 0] refill_state;
     always @(posedge CLK) begin
-         if (DATA_FROM_L2_BUFFER_READY & DATA_FROM_L2_BUFFER_VALID) begin
-            refill_state <= refill_state + 1;   
-         end
+        if (ENB) begin
+            if (DATA_FROM_L2_BUFFER_READY & DATA_FROM_L2_BUFFER_VALID) begin
+                refill_state <= refill_state + 1;   
+            end
+        end
     end
     
     // Once the data request cycle completes, (1) PREFETCH_COMMITED for one cycle (2) ONGOING_QUEUE_RD_ENB for one cycle
@@ -165,10 +180,12 @@ module Stream_Buffer_Control #(
     reg [STREAM_SEL_BITS - 1 : 0] prefetch_state;
     
     always @(posedge CLK) begin
-        if (prefetch_state == {STREAM_SEL_BITS{1'b1}}) begin
-            prefetch_state <= 1;
-        end else begin
-            prefetch_state <= prefetch_state + 1;
+        if (ENB) begin
+            if (prefetch_state == {STREAM_SEL_BITS{1'b1}}) begin
+                prefetch_state <= 1;
+            end else begin
+                prefetch_state <= prefetch_state + 1;
+            end
         end
     end
     
@@ -191,6 +208,7 @@ module Stream_Buffer_Control #(
         .N(N)
     ) lru_unit (
         .CLK(CLK),
+        .ENB(ENB),
         .USE(used),
         .LRU(lru)
     );
@@ -208,6 +226,7 @@ module Stream_Buffer_Control #(
                 .n(n)   
             ) stream_buffer_single_control (
                 .CLK(CLK),
+                .ENB(ENB),
                 .BUFFER_RESET(buffer_reset[i]),
                 .INIT_TOQ_VALUE(ALLOCATE_ADDR),
                 .ADDR_IN(PC_IN[ADDR_WIDTH + T - 1 : T]),
