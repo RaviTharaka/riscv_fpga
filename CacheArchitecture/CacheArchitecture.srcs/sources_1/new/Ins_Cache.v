@@ -76,6 +76,7 @@ module Ins_Cache #(
                 
         // Output data bus to the processor
         output reg [DATA_WIDTH     - 1 : 0] DATA_TO_PROC,
+        output reg [ADDR_WIDTH     - 1 : 0] PC_TO_PROC,
         
         // Input data bus from L2 cache        
         input                               DATA_FROM_L2_VALID,
@@ -128,6 +129,7 @@ module Ins_Cache #(
             // Output regsiter for the cache architecture
             if (CACHE_READY) begin
                 DATA_TO_PROC <= data_to_proc;
+                PC_TO_PROC <= pc_del_2;
             end         
             
             // Pipeline for previous address requests (processor level PC)
