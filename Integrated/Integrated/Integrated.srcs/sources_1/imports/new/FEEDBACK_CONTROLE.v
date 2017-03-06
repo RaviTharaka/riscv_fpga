@@ -23,6 +23,8 @@
 module FEEDBACK_CONTROLE(
     input [4:0] RS1_SEL,
     input [4:0] RS2_SEL,
+    input   EN,
+    input   BRANCH_TAKEN,
    // input RD_IN_PIPELINE,
     input RD_VALID,
     input [4:0] RD_OUT,
@@ -61,9 +63,10 @@ module FEEDBACK_CONTROLE(
     end
     always@(posedge CLK)
     begin
-      
-            if(STALL_ENABLE)
-            begin
+      if(EN)
+      begin
+//            if(STALL_ENABLE)
+//            begin
             
                 FLAG <= 1'b0;
                 RD_SHIFTREG[0] <= RD_OUT;
@@ -77,24 +80,24 @@ module FEEDBACK_CONTROLE(
                 RD_WB_VALID_SHIFTREG[2] <= RD_WB_VALID_SHIFTREG[1];
                 RD_WB_VALID_SHIFTREG[3] <= RD_WB_VALID_SHIFTREG[2];
                 RD_WB_VALID_SHIFTREG[4] <= RD_WB_VALID_SHIFTREG[3];
-            end
-            else
-            begin
+//            end
+//            else
+//            begin
             
-                FLAG <= 1'b1;
-                RD_SHIFTREG[0] <= 5'd0;
-                RD_SHIFTREG[1] <= RD_SHIFTREG[0];
-                RD_SHIFTREG[2] <= RD_SHIFTREG[1];
-                RD_SHIFTREG[3] <= RD_SHIFTREG[2];
-                RD_SHIFTREG[4] <= RD_SHIFTREG[3];
+//                FLAG <= 1'b1;
+//                RD_SHIFTREG[0] <= 5'd0;
+//                RD_SHIFTREG[1] <= RD_SHIFTREG[0];
+//                RD_SHIFTREG[2] <= RD_SHIFTREG[1];
+//                RD_SHIFTREG[3] <= RD_SHIFTREG[2];
+//                RD_SHIFTREG[4] <= RD_SHIFTREG[3];
                 
-                RD_WB_VALID_SHIFTREG[0] <= 1'b0;
-                RD_WB_VALID_SHIFTREG[1] <= RD_WB_VALID_SHIFTREG[0];
-                RD_WB_VALID_SHIFTREG[2] <= RD_WB_VALID_SHIFTREG[1];
-                RD_WB_VALID_SHIFTREG[3] <= RD_WB_VALID_SHIFTREG[2];
-                RD_WB_VALID_SHIFTREG[4] <= RD_WB_VALID_SHIFTREG[3];
-            end
-       
+//                RD_WB_VALID_SHIFTREG[0] <= 1'b0;
+//                RD_WB_VALID_SHIFTREG[1] <= RD_WB_VALID_SHIFTREG[0];
+//                RD_WB_VALID_SHIFTREG[2] <= RD_WB_VALID_SHIFTREG[1];
+//                RD_WB_VALID_SHIFTREG[3] <= RD_WB_VALID_SHIFTREG[2];
+//                RD_WB_VALID_SHIFTREG[4] <= RD_WB_VALID_SHIFTREG[3];
+//            end
+       end
     end
     always@(*)
     begin    

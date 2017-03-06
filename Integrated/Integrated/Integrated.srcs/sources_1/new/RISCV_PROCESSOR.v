@@ -124,6 +124,7 @@ module RISCV_PROCESSOR#(
     
     PIPELINE uut2(
          .CLK(CLK),
+         .CACHE_READY(CACHE_READY),
          .PC_IF_ID(PC_TO_PROC), //IF out to ID in
          .INS_IF_ID(DATA_TO_PROC),
          .BRANCH_TAKEN(BRANCH_TAKEN),

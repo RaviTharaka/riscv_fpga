@@ -29,7 +29,7 @@
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="zed"/>
     <Option Name="DSANumComputeUnits" Val="16"/>
-    <Option Name="WTXSimLaunchSim" Val="143"/>
+    <Option Name="WTXSimLaunchSim" Val="307"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -52,33 +52,6 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
       <Filter Type="Srcs"/>
-      <File Path="$PSRCDIR/sources_1/imports/new/Stream_Buffer_Single_Control.v">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/Stream_Buffer_Single_Control.v"/>
-          <Attr Name="ImportTime" Val="1487132831"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/new/LRU.v">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/LRU.v"/>
-          <Attr Name="ImportTime" Val="1487132831"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/new/FIFO.v">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/FIFO.v"/>
-          <Attr Name="ImportTime" Val="1487132831"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/imports/new/REG_ARRAY.v">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/REG_ARRAY.v"/>
@@ -137,6 +110,60 @@
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/2-1_MUX_32bit.v"/>
           <Attr Name="ImportTime" Val="1488440087"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/Stream_Buffer_Single_Control.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/Stream_Buffer_Single_Control.v"/>
+          <Attr Name="ImportTime" Val="1487132831"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/LRU.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/LRU.v"/>
+          <Attr Name="ImportTime" Val="1487132831"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/FIFO.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/FIFO.v"/>
+          <Attr Name="ImportTime" Val="1487132831"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/IDSTAGE.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/IDSTAGE.v"/>
+          <Attr Name="ImportTime" Val="1487388199"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/FEEDBACK_CONTROLE.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/CacheArchitecture/CacheArchitecture.srcs/sources_1/new/FEEDBACK_CONTROLE.v"/>
+          <Attr Name="ImportTime" Val="1488520941"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/new/EXSTAGE.v">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/EXSTAGE.v"/>
+          <Attr Name="ImportTime" Val="1485146900"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -232,28 +259,10 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/new/IDSTAGE.v">
+      <File Path="$PSRCDIR/sources_1/imports/new/PIPELINE.v">
         <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/IDSTAGE.v"/>
-          <Attr Name="ImportTime" Val="1487388199"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/new/FEEDBACK_CONTROLE.v">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/CacheArchitecture/CacheArchitecture.srcs/sources_1/new/FEEDBACK_CONTROLE.v"/>
-          <Attr Name="ImportTime" Val="1488520941"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/new/EXSTAGE.v">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/EXSTAGE.v"/>
-          <Attr Name="ImportTime" Val="1485146900"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/PIPELINE.v"/>
+          <Attr Name="ImportTime" Val="1488521215"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -263,15 +272,6 @@
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../CacheArchitecture/CacheArchitecture.srcs/sources_1/new/Ins_Cache.v"/>
           <Attr Name="ImportTime" Val="1487230875"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/new/PIPELINE.v">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/Pipeline/project/project.srcs/sources_1/new/PIPELINE.v"/>
-          <Attr Name="ImportTime" Val="1488521215"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -438,18 +438,17 @@
       </Config>
     </FileSet>
     <FileSet Name="blk_mem_gen_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/blk_mem_gen_0">
-      <File Path="$PSRCDIR/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci">
+      <File Path="$PSRCDIR/sources_1/ip/blk_mem_gen_0.xcix">
         <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/CacheArchitecture/CacheArchitecture.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci"/>
-          <Attr Name="ImportTime" Val="1487149530"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/ip/blk_mem_gen_0.xcix">
+      <File Path="$PSRCDIR/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci">
         <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../FYP/CacheArchitecture/CacheArchitecture.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci"/>
+          <Attr Name="ImportTime" Val="1487149530"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>

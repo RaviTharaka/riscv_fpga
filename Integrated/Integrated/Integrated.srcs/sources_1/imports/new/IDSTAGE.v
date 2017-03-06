@@ -80,6 +80,10 @@ module IDSTAGE(
     input [4:0] RD_WB;
          
     wire [2:0] EXT_CNT;
+    reg WB_VALID_OUT_L;
+    wire WB_VALID_OUT_CNT;
+    
+    
     REG_ARRAY REG_ARRAY(
         .DATA_IN(WB_DATA_IN),
         .RS1_SEL(INS_IN[19:15]),
@@ -87,7 +91,7 @@ module IDSTAGE(
         .CLK(CLK),
         .RD_WB_VALID_MEM3_WB(WB_VALID_INPUT),
         .RD_WB_MEM3_WB(RD_WB),         //to update register state       
-        .WB_VALID_ID(WB_VALID_OUT),
+        .WB_VALID_ID(WB_VALID_OUT_L),
         .RD_WB_ID(RD_OUT),  
         .RS1_DATAOUT(RS1_DATAOUT),
         .RS2_DATAOUT(RS2_DATAOUT)
@@ -106,6 +110,11 @@ module IDSTAGE(
     wire [6:0] OPCODE;
     wire [9:0] FUNCT;
     
+    
+    
+   
+    
+    
     assign OPCODE = INS_IN[6:0];
     assign OPCODE_OUT = INS_IN[6:0];
     assign FUNCT = {INS_IN[31:25],INS_IN[14:12]};
@@ -113,13 +122,25 @@ module IDSTAGE(
     assign RD_OUT = INS_IN[11:7];
     assign RS1_SEL = INS_IN[19:15];
     assign RS2_SEL = INS_IN[24:20];
+    assign WB_VALID_OUT = WB_VALID_OUT_L;
+    
+    //condition for not writing back to x0 register
+    always@(*)
+    begin
+        if(INS_IN[11:7]==5'd0)
+            WB_VALID_OUT_L = 1'b0;
+        else
+            WB_VALID_OUT_L = WB_VALID_OUT_CNT;
+    end
+    
+    
     
     CONTROLER_IDSTAGE CONTROLLER(
         .OPCODE(OPCODE),
         .FUNCT(FUNCT), 
         //.STALL_STATE,
         .EXT_CNT(EXT_CNT),
-        .WB_VALID_OUT(WB_VALID_OUT)
+        .WB_VALID_OUT(WB_VALID_OUT_CNT)
         );
      
     
