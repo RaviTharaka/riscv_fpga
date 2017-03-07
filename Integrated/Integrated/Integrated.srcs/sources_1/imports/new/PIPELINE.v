@@ -67,6 +67,7 @@ module PIPELINE(
     reg WB_VALID_MEM3_WB;
     reg STALL_ENABLE;
     reg STALL_ENABLE_1;
+    reg FLAG1;
     reg STALL_ENABLE_FINAL_CYCLE;
     
    
@@ -198,7 +199,7 @@ module PIPELINE(
         .RS1_SEL(RS1_SEL_WIRE),//RS1_SEL_ID_EX),
         .RS2_SEL(RS2_SEL_WIRE),//RS2_SEL_ID_EX),
         .EN(CACHE_READY),
-        .BRANCH_TAKEN(BRANCH_TAKEN_L),        //used to flush the shift reg if a branch is taken
+        .STALL_ENABLE(STALL_ENABLE),        //used to flush the shift reg if a branch is taken
      //   .RD_IN_PIPELINE(),
         .RD_VALID(WB_VALID_ID_EX_WIRE && STALL_ENABLE && STALL_ENABLE_1 && !(BRANCH_TAKEN_REG || BRANCH_TAKEN_L)),
         .RD_OUT(RD_ID_EX_WIRE),
@@ -214,7 +215,6 @@ module PIPELINE(
      //   .RD_MEM2_MEM3(RD_MEM2_MEM3),
         .ALU_OUT_MEM3_WB( WB_DATA_IN),
      //   .RD_MEM3_WB(RD_MEM3_WB),
-        .STALL_ENABLE(STALL_ENABLE),
         .UPDATED_RS1_VALUE(FEEDBACK_VALUE_RS1),
         .UPDATED_RS2_VALUE(FEEDBACK_VALUE_RS2),
         .MUX_RS1_SEL(ENABLE_FEEDBACK_RS1_CNT),
@@ -290,7 +290,18 @@ module PIPELINE(
                STALL_ENABLE_1 = 1'b0;    
            else
                STALL_ENABLE_1 = 1'b1;
-      
+               
+               
+           if(OPCODE_ID_EX == 7'b0000011 && FLAG1)
+           begin
+               STALL_ENABLE_1 = 1'b0;   
+               FLAG1 = 1'b0; 
+           end
+           else
+           begin
+               STALL_ENABLE_1 = 1'b1;
+               FLAG1 = 1'b1;
+           end
     //Emulation signal generation which are used running the block ram  
     
            if(OPCODE_EX_MEM1 == 7'b0100011)
