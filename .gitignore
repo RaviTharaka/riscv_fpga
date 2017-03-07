@@ -13,3 +13,6 @@
 !*.m
 !*.txt
 !*.xcix
+!*.java
+!*.xml
+!*.iml
