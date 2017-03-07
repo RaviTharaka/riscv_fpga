@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="404930000fs"></ZoomStartTime>
-      <ZoomEndTime time="795430001fs"></ZoomEndTime>
-      <Cursor1Time time="625000000fs"></Cursor1Time>
+      <ZoomStartTime time="1032024000fs"></ZoomStartTime>
+      <ZoomEndTime time="2576024001fs"></ZoomEndTime>
+      <Cursor1Time time="2400000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="218"></NameColumnWidth>
-      <ValueColumnWidth column_width="84"></ValueColumnWidth>
+      <NameColumnWidth column_width="243"></NameColumnWidth>
+      <ValueColumnWidth column_width="82"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
    <wvobject fp_name="/Test_RISCV_PROCESSOR/CLK" type="logic">

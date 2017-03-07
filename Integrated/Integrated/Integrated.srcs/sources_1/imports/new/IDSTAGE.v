@@ -21,7 +21,6 @@
 
 
 module IDSTAGE(
-  //  PC_IN,
     INS_IN,
     CLK,
     RD_OUT,
@@ -30,12 +29,9 @@ module IDSTAGE(
     RS2_SEL,
     RS1_DATAOUT,
     RS2_DATAOUT,
-    PC_OUT,
     OPCODE_OUT,
     FUNCT_OUT,
-    RD_IN_PIPELINE,
     WB_VALID_OUT,
- //   STALL_EN,
     
     WB_DATA_IN,
     WB_VALID_INPUT,
@@ -50,7 +46,6 @@ module IDSTAGE(
     );
     parameter REG_SIZE = 32;
     //ID stage 
-    //input [REG_SIZE-1:0] PC_IN;
     input [REG_SIZE-1:0] INS_IN;
     input CLK;  //for register 
     output [4:0] RD_OUT;
@@ -59,10 +54,8 @@ module IDSTAGE(
     output [4:0] RS2_SEL;
     output [REG_SIZE-1:0] RS1_DATAOUT;
     output [REG_SIZE-1:0] RS2_DATAOUT;
-    output [REG_SIZE-1:0] PC_OUT;
     output [6:0] OPCODE_OUT;
     output [9:0] FUNCT_OUT;
-    output RD_IN_PIPELINE;
     output WB_VALID_OUT;
     
     //EX Stage controle signals
@@ -71,7 +64,6 @@ module IDSTAGE(
     output MUX1_CNT;
     output MUX2_CNT;
     output MUX3_CNT; 
-  //  output STALL_EN;
     
     //WB stage variables
     

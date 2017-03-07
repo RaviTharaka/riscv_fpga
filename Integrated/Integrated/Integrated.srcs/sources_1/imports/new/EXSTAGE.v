@@ -21,13 +21,10 @@
 
 
 module EXSTAGE(
-    //input [4:0] RD, 
     input [31:0] PC_IN,
     input [31:0] RS1_IN,
     input [31:0] RS2_IN,
     input [31:0] IMM_IN,
-    input [6:0] OPCODE_IN,
-    input [14:0] FUNCT_IN,
     input [3:0] ALU_CNT_IN,     
     input [1:0] COMP_CNT_IN,
     input MUX1_CNT_IN,
@@ -41,20 +38,6 @@ module EXSTAGE(
     wire [31:0] B_BUS;
     wire [31:0] COMP2_BUS;
     wire [31:0] ROM_DATA;
-//    wire MUX1_CNT;
-//    wire MUX2_CNT;
-//    wire MUX3_CNT;
-//    wire [3:0] ALU_CNT;
-//    wire [1:0] COMP_CNT;
-        
-//    CONTROLER_EXSTAGE CONTROLER(
-//        .OPCODE(OPCODE_IN),
-//        .FUNCT(FUNCT_IN),
-//        .ALU_CNT(ALU_CNT),
-//        .COMP_CNT(COMP_CNT),
-//        .MUX1_CNT(MUX1_CNT),
-//        .MUX2_CNT(MUX2_CNT),
-//        .MUX3_CNT(MUX3_CNT));    
         
     MUX_2to1_32bit M1(
         .IN1(RS2_IN),
@@ -73,8 +56,6 @@ module EXSTAGE(
         .IN1(IMM_IN),
         .OP(COMP2_BUS),
         .CONTROL(MUX3_CNT_IN));
-    
-  //  MUX_4to1_32bit M2(.IN1(IMM_IN),.IN2(RS2_IN),.IN3(PC_IN),.IN4(ROM_DATA),.OP(B_BUS),.CONTROL(MUX2_CNT));
         
      ALU ALU(                    // Output is latched
         .A(A_BUS),
