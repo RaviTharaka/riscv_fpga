@@ -7,7 +7,7 @@ fact = 1000000;
 % Read trace data
 fileID = fopen('gcc.trace','r');
 formatSpec = '%c %x %d\n';
-A = fscanf(fileID,formatSpec,[3 50000])';
+A = fscanf(fileID,formatSpec,[3 100000])';
 
 % Reduce address space
 mem_addr = A(:,2);

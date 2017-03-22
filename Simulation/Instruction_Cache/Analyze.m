@@ -3,8 +3,10 @@ close all;
 
 fileID = fopen('result.txt','r');
 formatSpec = '%x';
+
 A = fscanf(fileID,formatSpec);
 A = int64(A);
+
 fileID = fopen('trace.txt','r');
 formatSpec = '%x';
 B = fscanf(fileID,formatSpec);
