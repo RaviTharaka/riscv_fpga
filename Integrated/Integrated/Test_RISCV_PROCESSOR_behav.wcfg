@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1032024000fs"></ZoomStartTime>
-      <ZoomEndTime time="2576024001fs"></ZoomEndTime>
-      <Cursor1Time time="2400000000fs"></Cursor1Time>
+      <ZoomStartTime time="3175833333fs"></ZoomStartTime>
+      <ZoomEndTime time="3924833334fs"></ZoomEndTime>
+      <Cursor1Time time="3800000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="243"></NameColumnWidth>
-      <ValueColumnWidth column_width="82"></ValueColumnWidth>
+      <ValueColumnWidth column_width="86"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
    <wvobject fp_name="/Test_RISCV_PROCESSOR/CLK" type="logic">
@@ -726,8 +726,8 @@
             <obj_property name="ObjectShortName">RS2_SEL_WIRE[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/uut2/COUNTER1" type="array">
-            <obj_property name="ElementShortName">COUNTER1[31:0]</obj_property>
-            <obj_property name="ObjectShortName">COUNTER1[31:0]</obj_property>
+            <obj_property name="ElementShortName">COUNTER1[3:0]</obj_property>
+            <obj_property name="ObjectShortName">COUNTER1[3:0]</obj_property>
             <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/uut2/PC_ID_EX" type="array">
@@ -783,13 +783,9 @@
             <obj_property name="ElementShortName">BRANCH_TAKEN_REG</obj_property>
             <obj_property name="ObjectShortName">BRANCH_TAKEN_REG</obj_property>
          </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/uut2/BRANCH_TAKEN_L" type="logic">
-            <obj_property name="ElementShortName">BRANCH_TAKEN_L</obj_property>
-            <obj_property name="ObjectShortName">BRANCH_TAKEN_L</obj_property>
-         </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/uut2/COUNTER2" type="array">
-            <obj_property name="ElementShortName">COUNTER2[31:0]</obj_property>
-            <obj_property name="ObjectShortName">COUNTER2[31:0]</obj_property>
+            <obj_property name="ElementShortName">COUNTER2[3:0]</obj_property>
+            <obj_property name="ObjectShortName">COUNTER2[3:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/uut2/COMP_OUT_EX_MEM1" type="logic">
             <obj_property name="ElementShortName">COMP_OUT_EX_MEM1</obj_property>

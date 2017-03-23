@@ -94,7 +94,7 @@ module Test_RISCV_PROCESSOR ();
         l2_ready = 1;
         fileTrace = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/trace.txt", "r");
         fileResult = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/result.txt", "w");
-        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Ins_Memory2.txt", ins_memory);
+        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Ins_Memory5.txt", ins_memory);
                      
         #106;
         RSTN = 1;

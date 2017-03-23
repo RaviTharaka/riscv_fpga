@@ -192,10 +192,9 @@ module PIPELINE #(
     reg                                                      BRANCH_TAKEN_REG;
     //counter1 is used to find the fnal clock cycle when stall enable is given
     reg                  [  3   :   0   ]                    COUNTER1;
-        //COUNTER2 is used to flush the IF ID EX stages of the pipeline at a true branch instruction
+    //COUNTER2 is used to flush the IF ID EX stages of the pipeline at a true branch instruction
     reg                  [  3   :   0   ]                    COUNTER2;
-
-       
+    //VAriable to enable writeback in JAL and JALR
     initial
     begin
         //stalls when off
