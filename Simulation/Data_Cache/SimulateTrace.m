@@ -41,6 +41,8 @@ no_of_errors = length(sim_out(sim_out(1:length(fpga_out),4)~=0,2))
 requests     = length(fpga_out)
 errors       = sim_out(sim_out(1:length(fpga_out),4)~=0,:);
 
+errors(:,4) = errors(:,1)-errors(:,4);
+
 B(:,4) = 1:length(B);
 C = B(B(:,1) ~= 0, :);
 

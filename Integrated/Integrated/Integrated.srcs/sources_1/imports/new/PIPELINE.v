@@ -308,15 +308,15 @@ module PIPELINE #(
     //Feedback is done to the ID_EX buffer
 
            if(OPCODE_EX_MEM1 == 7'b0000011) 
-               STALL_ENABLE_1 = #7 1'b0;
+               STALL_ENABLE_1 =  1'b0;
            else if(OPCODE_MEM1_MEM2 == 7'b0000011) 
-               STALL_ENABLE_1 = #7 1'b0;
+               STALL_ENABLE_1 =  1'b0;
            else if(OPCODE_MEM2_MEM3 == 7'b0000011) 
-               STALL_ENABLE_1 = #7 1'b0;
+               STALL_ENABLE_1 =  1'b0;
            else if(OPCODE_MEM3_WB == 7'b0000011) 
-               STALL_ENABLE_1 = #7 1'b0;
+               STALL_ENABLE_1 =  1'b0;
            else
-               STALL_ENABLE_1 = #7 1'b1;
+               STALL_ENABLE_1 =  1'b1;
            
     //branch output controle
            if(OPCODE_EX_MEM1 == 7'b1100011)
