@@ -1,3 +1,10 @@
+
+sort.o:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010000 <_ftext>:
    10000:	00002197          	auipc	gp,0x2
    10004:	a8018193          	addi	gp,gp,-1408 # 11a80 <_gp>
    10008:	00001297          	auipc	t0,0x1
@@ -16,7 +23,11 @@
    1003c:	00000613          	li	a2,0
    10040:	114000ef          	jal	10154 <main>
    10044:	2900006f          	j	102d4 <exit>
+
+00010048 <_fini>:
    10048:	00008067          	ret
+
+0001004c <deregister_tm_clones>:
    1004c:	80018713          	addi	a4,gp,-2048 # 11280 <_edata>
    10050:	80318793          	addi	a5,gp,-2045 # 11283 <_edata+0x3>
    10054:	40e787b3          	sub	a5,a5,a4
@@ -28,6 +39,8 @@
    1006c:	80018513          	addi	a0,gp,-2048 # 11280 <_edata>
    10070:	00030067          	jr	t1
    10074:	00008067          	ret
+
+00010078 <register_tm_clones>:
    10078:	80018793          	addi	a5,gp,-2048 # 11280 <_edata>
    1007c:	80018593          	addi	a1,gp,-2048 # 11280 <_edata>
    10080:	40f585b3          	sub	a1,a1,a5
@@ -42,6 +55,8 @@
    100a4:	80018513          	addi	a0,gp,-2048 # 11280 <_edata>
    100a8:	00030067          	jr	t1
    100ac:	00008067          	ret
+
+000100b0 <__do_global_dtors_aux>:
    100b0:	ff010113          	addi	sp,sp,-16
    100b4:	00812423          	sw	s0,8(sp)
    100b8:	81c1c783          	lbu	a5,-2020(gp) # 1129c <_bss_start>
@@ -61,6 +76,8 @@
    100f0:	00812403          	lw	s0,8(sp)
    100f4:	01010113          	addi	sp,sp,16
    100f8:	00008067          	ret
+
+000100fc <frame_dummy>:
    100fc:	ff010113          	addi	sp,sp,-16
    10100:	000007b7          	lui	a5,0x0
    10104:	00112623          	sw	ra,12(sp)
@@ -83,6 +100,8 @@
    10148:	fe0786e3          	beqz	a5,10134 <frame_dummy+0x38>
    1014c:	000780e7          	jalr	a5
    10150:	fe5ff06f          	j	10134 <frame_dummy+0x38>
+
+00010154 <main>:
    10154:	fd010113          	addi	sp,sp,-48
    10158:	02812623          	sw	s0,44(sp)
    1015c:	03010413          	addi	s0,sp,48
@@ -174,11 +193,15 @@
    102b4:	00800793          	li	a5,8
    102b8:	fce7d4e3          	ble	a4,a5,10280 <main+0x12c>
    102bc:	0000006f          	j	102bc <main+0x168>
+
+000102c0 <atexit>:
    102c0:	00050593          	mv	a1,a0
    102c4:	00000693          	li	a3,0
    102c8:	00000613          	li	a2,0
    102cc:	00000513          	li	a0,0
    102d0:	1340006f          	j	10404 <__register_exitproc>
+
+000102d4 <exit>:
    102d4:	ff010113          	addi	sp,sp,-16
    102d8:	00000593          	li	a1,0
    102dc:	00812423          	sw	s0,8(sp)
@@ -191,6 +214,8 @@
    102f8:	000780e7          	jalr	a5
    102fc:	00040513          	mv	a0,s0
    10300:	744000ef          	jal	10a44 <_exit>
+
+00010304 <__libc_fini_array>:
    10304:	ff010113          	addi	sp,sp,-16
    10308:	00812423          	sw	s0,8(sp)
    1030c:	00912223          	sw	s1,4(sp)
@@ -215,6 +240,8 @@
    10358:	00412483          	lw	s1,4(sp)
    1035c:	01010113          	addi	sp,sp,16
    10360:	ce9ff06f          	j	10048 <_fini>
+
+00010364 <__libc_init_array>:
    10364:	ff010113          	addi	sp,sp,-16
    10368:	00812423          	sw	s0,8(sp)
    1036c:	01212023          	sw	s2,0(sp)
@@ -255,6 +282,8 @@
    103f8:	00012903          	lw	s2,0(sp)
    103fc:	01010113          	addi	sp,sp,16
    10400:	00008067          	ret
+
+00010404 <__register_exitproc>:
    10404:	fe010113          	addi	sp,sp,-32
    10408:	00812c23          	sw	s0,24(sp)
    1040c:	8041a403          	lw	s0,-2044(gp) # 11284 <_global_impure_ptr>
@@ -321,6 +350,8 @@
    10500:	f3dff06f          	j	1043c <__register_exitproc+0x38>
    10504:	fff00513          	li	a0,-1
    10508:	f99ff06f          	j	104a0 <__register_exitproc+0x9c>
+
+0001050c <__call_exitprocs>:
    1050c:	fc010113          	addi	sp,sp,-64
    10510:	01712e23          	sw	s7,28(sp)
    10514:	8041ab83          	lw	s7,-2044(gp) # 11284 <_global_impure_ptr>
@@ -416,6 +447,8 @@
    1067c:	0009a983          	lw	s3,0(s3)
    10680:	ee0998e3          	bnez	s3,10570 <__call_exitprocs+0x64>
    10684:	f45ff06f          	j	105c8 <__call_exitprocs+0xbc>
+
+00010688 <__syscall_error>:
    10688:	ff010113          	addi	sp,sp,-16
    1068c:	00112623          	sw	ra,12(sp)
    10690:	00812423          	sw	s0,8(sp)
@@ -428,62 +461,86 @@
    106ac:	fff00513          	li	a0,-1
    106b0:	01010113          	addi	sp,sp,16
    106b4:	00008067          	ret
+
+000106b8 <open>:
    106b8:	00000693          	li	a3,0
    106bc:	40000893          	li	a7,1024
    106c0:	00000073          	ecall
    106c4:	fc0542e3          	bltz	a0,10688 <__syscall_error>
    106c8:	00008067          	ret
+
+000106cc <openat>:
    106cc:	03800893          	li	a7,56
    106d0:	00000073          	ecall
    106d4:	fa054ae3          	bltz	a0,10688 <__syscall_error>
    106d8:	00008067          	ret
+
+000106dc <lseek>:
    106dc:	00000693          	li	a3,0
    106e0:	03e00893          	li	a7,62
    106e4:	00000073          	ecall
    106e8:	fa0540e3          	bltz	a0,10688 <__syscall_error>
    106ec:	00008067          	ret
+
+000106f0 <read>:
    106f0:	00000693          	li	a3,0
    106f4:	03f00893          	li	a7,63
    106f8:	00000073          	ecall
    106fc:	f80546e3          	bltz	a0,10688 <__syscall_error>
    10700:	00008067          	ret
+
+00010704 <write>:
    10704:	00000693          	li	a3,0
    10708:	04000893          	li	a7,64
    1070c:	00000073          	ecall
    10710:	f6054ce3          	bltz	a0,10688 <__syscall_error>
    10714:	00008067          	ret
+
+00010718 <fstat>:
    10718:	00000613          	li	a2,0
    1071c:	00000693          	li	a3,0
    10720:	05000893          	li	a7,80
    10724:	00000073          	ecall
    10728:	f60540e3          	bltz	a0,10688 <__syscall_error>
    1072c:	00008067          	ret
+
+00010730 <stat>:
    10730:	00000613          	li	a2,0
    10734:	00000693          	li	a3,0
    10738:	40e00893          	li	a7,1038
    1073c:	00000073          	ecall
    10740:	f40544e3          	bltz	a0,10688 <__syscall_error>
    10744:	00008067          	ret
+
+00010748 <lstat>:
    10748:	00000613          	li	a2,0
    1074c:	00000693          	li	a3,0
    10750:	40f00893          	li	a7,1039
    10754:	00000073          	ecall
    10758:	f20548e3          	bltz	a0,10688 <__syscall_error>
    1075c:	00008067          	ret
+
+00010760 <fstatat>:
    10760:	04f00893          	li	a7,79
    10764:	00000073          	ecall
    10768:	f20540e3          	bltz	a0,10688 <__syscall_error>
    1076c:	00008067          	ret
+
+00010770 <access>:
    10770:	00000613          	li	a2,0
    10774:	00000693          	li	a3,0
    10778:	40900893          	li	a7,1033
    1077c:	00000073          	ecall
    10780:	f00544e3          	bltz	a0,10688 <__syscall_error>
    10784:	00008067          	ret
+
+00010788 <faccessat>:
    10788:	03000893          	li	a7,48
    1078c:	00000073          	ecall
    10790:	ee054ce3          	bltz	a0,10688 <__syscall_error>
    10794:	00008067          	ret
+
+00010798 <close>:
    10798:	00000593          	li	a1,0
    1079c:	00000613          	li	a2,0
    107a0:	00000693          	li	a3,0
@@ -491,12 +548,16 @@
    107a8:	00000073          	ecall
    107ac:	ec054ee3          	bltz	a0,10688 <__syscall_error>
    107b0:	00008067          	ret
+
+000107b4 <link>:
    107b4:	00000613          	li	a2,0
    107b8:	00000693          	li	a3,0
    107bc:	40100893          	li	a7,1025
    107c0:	00000073          	ecall
    107c4:	ec0542e3          	bltz	a0,10688 <__syscall_error>
    107c8:	00008067          	ret
+
+000107cc <unlink>:
    107cc:	00000593          	li	a1,0
    107d0:	00000613          	li	a2,0
    107d4:	00000693          	li	a3,0
@@ -504,6 +565,8 @@
    107dc:	00000073          	ecall
    107e0:	ea0544e3          	bltz	a0,10688 <__syscall_error>
    107e4:	00008067          	ret
+
+000107e8 <execve>:
    107e8:	ff010113          	addi	sp,sp,-16
    107ec:	00112623          	sw	ra,12(sp)
    107f0:	294000ef          	jal	10a84 <__errno>
@@ -513,6 +576,8 @@
    10800:	01010113          	addi	sp,sp,16
    10804:	fff00513          	li	a0,-1
    10808:	00008067          	ret
+
+0001080c <fork>:
    1080c:	ff010113          	addi	sp,sp,-16
    10810:	00112623          	sw	ra,12(sp)
    10814:	270000ef          	jal	10a84 <__errno>
@@ -522,8 +587,12 @@
    10824:	01010113          	addi	sp,sp,16
    10828:	fff00513          	li	a0,-1
    1082c:	00008067          	ret
+
+00010830 <getpid>:
    10830:	00100513          	li	a0,1
    10834:	00008067          	ret
+
+00010838 <kill>:
    10838:	ff010113          	addi	sp,sp,-16
    1083c:	00112623          	sw	ra,12(sp)
    10840:	244000ef          	jal	10a84 <__errno>
@@ -533,6 +602,8 @@
    10850:	01010113          	addi	sp,sp,16
    10854:	fff00513          	li	a0,-1
    10858:	00008067          	ret
+
+0001085c <wait>:
    1085c:	ff010113          	addi	sp,sp,-16
    10860:	00112623          	sw	ra,12(sp)
    10864:	220000ef          	jal	10a84 <__errno>
@@ -542,6 +613,8 @@
    10874:	01010113          	addi	sp,sp,16
    10878:	fff00513          	li	a0,-1
    1087c:	00008067          	ret
+
+00010880 <isatty>:
    10880:	f9010113          	addi	sp,sp,-112
    10884:	00810593          	addi	a1,sp,8
    10888:	00000613          	li	a2,0
@@ -556,6 +629,8 @@
    108ac:	00157513          	andi	a0,a0,1
    108b0:	07010113          	addi	sp,sp,112
    108b4:	00008067          	ret
+
+000108b8 <times>:
    108b8:	fe010113          	addi	sp,sp,-32
    108bc:	00812c23          	sw	s0,24(sp)
    108c0:	8141a783          	lw	a5,-2028(gp) # 11294 <t0.2269>
@@ -598,6 +673,8 @@
    10954:	01412483          	lw	s1,20(sp)
    10958:	02010113          	addi	sp,sp,32
    1095c:	00008067          	ret
+
+00010960 <gettimeofday>:
    10960:	00000593          	li	a1,0
    10964:	00000613          	li	a2,0
    10968:	00000693          	li	a3,0
@@ -605,20 +682,34 @@
    10970:	00000073          	ecall
    10974:	d0054ae3          	bltz	a0,10688 <__syscall_error>
    10978:	00008067          	ret
+
+0001097c <ftime>:
    1097c:	00051223          	sh	zero,4(a0)
    10980:	00052023          	sw	zero,0(a0)
    10984:	00000513          	li	a0,0
    10988:	00008067          	ret
+
+0001098c <utime>:
    1098c:	fff00513          	li	a0,-1
    10990:	00008067          	ret
+
+00010994 <chown>:
    10994:	fff00513          	li	a0,-1
    10998:	00008067          	ret
+
+0001099c <chmod>:
    1099c:	fff00513          	li	a0,-1
    109a0:	00008067          	ret
+
+000109a4 <chdir>:
    109a4:	fff00513          	li	a0,-1
    109a8:	00008067          	ret
+
+000109ac <getcwd>:
    109ac:	00000513          	li	a0,0
    109b0:	00008067          	ret
+
+000109b4 <sysconf>:
    109b4:	00200793          	li	a5,2
    109b8:	00f51863          	bne	a0,a5,109c8 <sysconf+0x14>
    109bc:	000f4537          	lui	a0,0xf4
@@ -626,6 +717,8 @@
    109c4:	00008067          	ret
    109c8:	fff00513          	li	a0,-1
    109cc:	00008067          	ret
+
+000109d0 <sbrk>:
    109d0:	8101a783          	lw	a5,-2032(gp) # 11290 <_fbss>
    109d4:	00050713          	mv	a4,a0
    109d8:	02079863          	bnez	a5,10a08 <sbrk+0x38>
@@ -655,6 +748,8 @@
    10a38:	80a1a823          	sw	a0,-2032(gp) # 11290 <_fbss>
    10a3c:	00078513          	mv	a0,a5
    10a40:	00008067          	ret
+
+00010a44 <_exit>:
    10a44:	00000593          	li	a1,0
    10a48:	00000613          	li	a2,0
    10a4c:	00000693          	li	a3,0
@@ -662,6 +757,8 @@
    10a54:	00000073          	ecall
    10a58:	c20548e3          	bltz	a0,10688 <__syscall_error>
    10a5c:	0000006f          	j	10a5c <_exit+0x18>
+
+00010a60 <__mulsi3>:
    10a60:	00050613          	mv	a2,a0
    10a64:	00000513          	li	a0,0
    10a68:	0015f693          	andi	a3,a1,1
@@ -671,5 +768,7 @@
    10a78:	00161613          	slli	a2,a2,0x1
    10a7c:	fe0596e3          	bnez	a1,10a68 <__mulsi3+0x8>
    10a80:	00008067          	ret
+
+00010a84 <__errno>:
    10a84:	8081a503          	lw	a0,-2040(gp) # 11288 <_impure_ptr>
    10a88:	00008067          	ret

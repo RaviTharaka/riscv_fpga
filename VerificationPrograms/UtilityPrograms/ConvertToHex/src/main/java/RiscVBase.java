@@ -6,7 +6,7 @@ import java.util.Scanner;
  */
 public class RiscVBase {
     public static void main(String args[]){
-        String temp = "fe010113";
+        String temp = "14c0006f";
 
         HexBin hexBin = new HexBin();
 
@@ -26,10 +26,10 @@ public class RiscVBase {
         * */
         ConvertCode convertCode = new ConvertCode();
         ArrayList hexCode = convertCode.ConvertToHexCode(arrayList);
-        System.out.println(hexCode.get(0));
+        /*System.out.println(hexCode.get(0));
         System.out.println(hexCode.get(1));
         System.out.println(hexCode.get(2));
-
+*/
         FileOut fileOut = new FileOut();
         fileOut.writeFile(hexCode);
         /*****************************************************************/
