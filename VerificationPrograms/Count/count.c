@@ -5,9 +5,13 @@ int main(){
 	int count=0;
 
 	for(i=0;i<10;i++){
-		count=i;
+	count=i;
+	*(int*)0x10150 = count;
 	//printf("%d", i);
 	}
 
+	while(1){}
+
+	return 0;
 	
 }

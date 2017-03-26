@@ -75,10 +75,10 @@ module ALU(
 //                            end
 //                        end
 //                    end
-//                4'b1001 :                              //ALU_OUT = A
-//                    OUTPUT_REG = A;
-//                4'b1010 :                              //ALU_OUT = B
-//                    OUTPUT_REG = B;
+                4'b1001 :                              //ALU_OUT = A
+                    OUTPUT_REG = A;
+                4'b1010 :                              //ALU_OUT = B
+                    OUTPUT_REG = B;
                 default : OUTPUT_REG = 32'd0;
             endcase  
     end

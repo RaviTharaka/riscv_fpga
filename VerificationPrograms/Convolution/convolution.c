@@ -4,8 +4,8 @@
 
 
 int main(){
-    int i=0,j=0;
-	//int k=0;
+    int i,j;
+	int k;
     int sampleCount = 9;
     int kernelCount = 3;
     int x[9] = {1,2,3,4,5,6,7,8,9};
@@ -19,10 +19,10 @@ int main(){
         }
     }
 
-	//for(k=0;k<sampleCount;k++){
-	//	printf("%d\n",y[k]);
-	//}
+	for(k=0;k<sampleCount;k++){
+		*(int*)0x10150 = y[k];
+	}
 
-    //printf("Hello world!\n");
+    while(1){}
     return 0;
 }

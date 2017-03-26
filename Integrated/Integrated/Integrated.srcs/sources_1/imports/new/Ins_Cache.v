@@ -614,7 +614,7 @@ module Ins_Cache #(
         pc                    = 32'h0001015C;   
         pc_del_1              = 32'h00010158;
         pc_del_2              = 32'h00010154;
-        
+                
         word_address_del_1    = pc_del_1[BYTES_PER_WORD                +: (B - T - 5)      ];
         tag_address_del_1     = pc_del_1[(BYTES_PER_WORD + B - 5)      +: (S - a - B)      ];
         tag_del_1             = pc_del_1[(ADDR_WIDTH - 1)              -: TAG_WIDTH        ];

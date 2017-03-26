@@ -39,8 +39,8 @@ module Test_RISCV_PROCESSOR ();
     parameter L2_DELAY_RD        = 7;                       // Read delay of the L2 cache (from start of request upto first reply)
     parameter L2_DELAY_WR        = 4;                       // Write delay of the L2 cache (from sending last data to WR_COMPLETE acknowledgement)
     
-    parameter INS_RAM_ADDR_WIDTH = 16;                      // 2^INS_RAM_ADDR_WIDTH is the depth of the main instruction memory of the system
-    parameter DAT_RAM_ADDR_WIDTH = 16;                      // 2^INS_RAM_ADDR_WIDTH is the depth of the main instruction memory of the system
+    parameter INS_RAM_ADDR_WIDTH = 14;                      // 2^INS_RAM_ADDR_WIDTH is the depth of the main instruction memory of the system
+    parameter DAT_RAM_ADDR_WIDTH = 14;                      // 2^INS_RAM_ADDR_WIDTH is the depth of the main instruction memory of the system
             
     // Calculated parameters
     localparam L2_BUS_WIDTH      = 1 << W;
@@ -160,6 +160,22 @@ module Test_RISCV_PROCESSOR ();
     reg                      l2_ready_ins;
     
     assign ADDR_TO_L2_READY_INS = l2_ready_ins & DATA_FROM_L2_READY_INS;    
+    
+    wire [32    - 1 : 0] temp4 = {output_addr_reg_ins[INS_RAM_ADDR_WIDTH + 2  - 1 : 2 + B - 5    ], {(B - 5    ){1'b0}}};
+    wire [B - 5 - 1 : 0] temp5 = {output_addr_reg_ins[2 + B - 5               - 1 : 2 + W - 5 + T], {(W - 5 + T){1'b0}}};
+    
+    genvar ar,as;
+    wire [31 : 0] read_value_ins [L2_BURST - 1 : 0][(1 << W - 5) - 1 : 0];
+    generate
+        for (ar = 0; ar < L2_BURST; ar = ar + 1) begin
+            for (as = 0; as < (1 << W - 5); as = as + 1) begin
+                wire [B - 5 - 1 : 0] temp6 = temp5 + {ar[B - W - 1 : 0], {(W - 5){1'b0}}};
+                
+                assign read_value_ins[ar][as] = ins_memory[temp4 + temp6 + as];
+            end
+        end
+    endgenerate
+    
                         
     always @(posedge CLK) begin
         if (DATA_FROM_L2_READY_INS) begin
@@ -197,7 +213,7 @@ module Test_RISCV_PROCESSOR ();
             for (k = 0; k < L2_BURST; k = k + 1) begin
                 if (output_data_state_ins[k] == 1) begin
                     for (l = 0; l < (1 << W - 5); l = l + 1) begin
-                        DATA_FROM_L2_INS[l * DATA_WIDTH +: DATA_WIDTH] <= ins_memory[{output_addr_reg_ins[INS_RAM_ADDR_WIDTH - 1 : 2 + B - 5 - T], {(B - 5 - T){1'b0}}} + {k, {(W - 5){1'b0}}} + l];
+                        DATA_FROM_L2_INS[l * DATA_WIDTH +: DATA_WIDTH] <= read_value_ins[k][l];
                     end
                 end
             end
@@ -220,17 +236,17 @@ module Test_RISCV_PROCESSOR ();
         
     assign RD_ADDR_TO_L2_READY_DAT = l2_ready_dat & DATA_FROM_L2_READY_DAT;    
     
-    wire [32    - 1 : 0] temp1 = {rd_output_addr_reg_dat[DAT_RAM_ADDR_WIDTH + 2 - 1 : 2 + B - 5    ], {(B - 5    ){1'b0}}};
+    wire [32    - 1 : 0] temp1 = {rd_output_addr_reg_dat[DAT_RAM_ADDR_WIDTH + 2  - 1 : 2 + B - 5    ], {(B - 5    ){1'b0}}};
     wire [B - 5 - 1 : 0] temp2 = {rd_output_addr_reg_dat[2 + B - 5               - 1 : 2 + W - 5 + T], {(W - 5 + T){1'b0}}};
     
     genvar ap,aq;
-    wire [31 : 0] read_value [L2_BURST - 1 : 0][(1 << W - 5) - 1 : 0];
+    wire [31 : 0] read_value_dat [L2_BURST - 1 : 0][(1 << W - 5) - 1 : 0];
     generate
         for (ap = 0; ap < L2_BURST; ap = ap + 1) begin
             for (aq = 0; aq < (1 << W - 5); aq = aq + 1) begin
                 wire [B - 5 - 1 : 0] temp3 = temp2 + {ap[B - W - 1 : 0], {(W - 5){1'b0}}};
                 
-                assign read_value[ap][aq] = dat_memory[temp1 + temp3 + aq];
+                assign read_value_dat[ap][aq] = dat_memory[temp1 + temp3 + aq];
             end
         end
     endgenerate
@@ -271,7 +287,7 @@ module Test_RISCV_PROCESSOR ();
             for (k = 0; k < L2_BURST; k = k + 1) begin
                 if (rd_output_data_state_dat[k] == 1) begin
                     for (l = 0; l < (1 << W - 5); l = l + 1) begin
-                        DATA_FROM_L2_DAT[l * DATA_WIDTH +: DATA_WIDTH] <= read_value[k][l];                                
+                        DATA_FROM_L2_DAT[l * DATA_WIDTH +: DATA_WIDTH] <= read_value_dat[k][l];                                
                     end
                 end
             end

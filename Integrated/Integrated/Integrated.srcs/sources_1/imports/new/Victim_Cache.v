@@ -85,12 +85,13 @@ module Victim_Cache #(
     // Memories of the victim cache                                             //
     //////////////////////////////////////////////////////////////////////////////
         
-    reg [LINE_RAM_WIDTH     - 1 : 0] data_memory [0 : VICTIM_CACHE_DEPTH * BLOCK_SECTIONS - 1];
-    reg [ADDR_MEMORY_WIDTH  - 1 : 0] addr_memory [0 : VICTIM_CACHE_DEPTH                  - 1];
-    reg                              ctrl_memory [0 : VICTIM_CACHE_DEPTH                  - 1];
+    reg [LINE_RAM_WIDTH      - 1 : 0] data_memory [0 : VICTIM_CACHE_DEPTH * BLOCK_SECTIONS - 1];
+    reg [ADDR_MEMORY_WIDTH   - 1 : 0] addr_memory [0 : VICTIM_CACHE_DEPTH                  - 1];
+    reg                               ctrl_memory [0 : VICTIM_CACHE_DEPTH                  - 1];
         
-    reg                              dirty       [0 : VICTIM_CACHE_DEPTH                  - 1];
-    reg                              valid       [0 : VICTIM_CACHE_DEPTH                  - 1];
+    reg [VICTIM_CACHE_DEPTH  - 1 : 0] dirty;
+    reg [VICTIM_CACHE_DEPTH  - 1 : 0] valid;
+    reg [VICTIM_CACHE_DEPTH  - 1 : 0] valid_wire;
     
     wire                             victim_cache_empty;
     wire                             victim_cache_full;
@@ -105,7 +106,7 @@ module Victim_Cache #(
     integer i;
     always @(posedge CLK) begin
         for (i = 0; i < VICTIM_CACHE_DEPTH; i = i + 1) begin
-            equality[i] <= (addr_memory[i] == SEARCH_ADDR[SEARCH_ADDR_WIDTH - 1 : T]) & valid[i];
+            equality[i] <= (addr_memory[i] == SEARCH_ADDR[SEARCH_ADDR_WIDTH - 1 : T]) & valid_wire[i];
         end
     end
     
@@ -124,7 +125,7 @@ module Victim_Cache #(
     always @(*) begin
         if (|equality)
             for (j = 0; j < VICTIM_CACHE_DEPTH; j = j + 1) begin
-                temp = victim_wr_pos + j;
+                temp = victim_wr_pos + j + 1;
                 if (equality[temp]) begin
                     hit_address = temp;
                 end else begin
@@ -218,6 +219,10 @@ module Victim_Cache #(
             if (victim_wr_state == 0) begin
                 addr_memory[victim_wr_pos] <= ADDR_FROM_L1[SEARCH_ADDR_WIDTH - 1  : T];
                 ctrl_memory[victim_wr_pos] <= CONTROL_FROM_L1;
+                
+                // Valid bit is turned off for the next write position and turned on for the current
+                valid[victim_wr_pos_plus_2] <= 1'b0;
+                valid[victim_wr_pos]        <= 1'b1;                                
             end
             
             // Last part (section address) is taken directly from ADDR_FROM_L1
@@ -225,17 +230,29 @@ module Victim_Cache #(
             
             // At the last stage of the write 
             if (victim_wr_state == {T{1'b1}}) begin
-                // Valid bit is turned off for the next write position and turned on for the current
-                valid[victim_wr_pos]        <= 1'b1;
-                valid[victim_wr_pos_plus_2] <= 1'b0;
-                
                 // Write position shifts to the next value
                 {victim_wr_pos_msb, victim_wr_pos} <= {victim_wr_pos_msb, victim_wr_pos} + 1;
             end
         end
     end
     
-    
+    integer k;
+    always @(*) begin
+        if (WR_FROM_L1_VALID & WR_FROM_L1_READY & victim_wr_state == 0) begin
+            for (k = 0; k < VICTIM_CACHE_DEPTH; k = k + 1) begin
+                // Valid bit is turned off for the next write position and turned on for the current
+                if (k == victim_wr_pos) 
+                    valid_wire[k] = 1'b1;
+                else if (k == victim_wr_pos_plus_2)
+                    valid_wire[k] = 1'b0;
+                else 
+                    valid_wire[k] = valid[k];
+            end
+        end else begin
+            valid_wire = valid;
+        end
+    end
+        
     //////////////////////////////////////////////////////////////////////////////
     // Writing data to L2 cache                                                 //
     //////////////////////////////////////////////////////////////////////////////
@@ -339,7 +356,6 @@ module Victim_Cache #(
     // Initial values                                                           //
     //////////////////////////////////////////////////////////////////////////////
     
-    integer k;
     initial begin
         
         VICTIM_HIT        = 0;

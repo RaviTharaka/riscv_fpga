@@ -6,7 +6,7 @@
 int list[MAX] = {1,8,4,6,0,3,5,2,7,9};
 int main() {	
    int temp;
-   int i,j;
+   int i,j,k;
    bool swapped = false; 
    for(i = 0; i < MAX-1; i++) { 
       swapped = false;
@@ -22,5 +22,11 @@ int main() {
          break;
       }
    }
+
+	for(k = 0; k < MAX-1; k++){
+		*(int*)0x10150 =list[k];
+	}
+
+	while(1){}
 	return 0;	
 }
