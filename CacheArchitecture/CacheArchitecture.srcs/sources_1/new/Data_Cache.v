@@ -135,7 +135,7 @@ module Data_Cache #(
     // Cache pipeline registers
     reg  [WORDS_PER_SECT  - 1 : 0]   word_address_del_1,    word_address_del_2;
     reg  [TAG_ADDR_WIDTH  - 1 : 0]   tag_address_del_1,     tag_address_del_2;
-    reg  [TAG_WIDTH       - 1 : 0]   tag_del_1,             tag_del_2;
+    reg  [TAG_WIDTH       - 1 : 0]   tag_del_1,             tag_del_2,             tag_del_3;
     reg  [T               - 1 : 0]   section_address_del_1, section_address_del_2;
     
     reg  [2               - 1 : 0]   control_del_1,         control_del_2;
@@ -165,6 +165,8 @@ module Data_Cache #(
             
             control_del_2         <= control_del_1;
             data_del_2            <= data_del_1; 
+            
+            tag_del_3             <= tag_del_2;
         end    
         
         // Pipeline for the main processor
@@ -223,7 +225,7 @@ module Data_Cache #(
     reg  [ASSOCIATIVITY   - 1 : 0] tag_match;                          // Tag matches in a one-hot encoding (DM3)
     reg  [ASSOCIATIVITY   - 1 : 0] tag_valid;                          // Whether the tag is valid for the given section of the cache block (DM3)
     wire [ASSOCIATIVITY   - 1 : 0] hit_set_wire;                       // Whether tag matches and is valid
-    reg  [ASSOCIATIVITY   - 1 : 0] tag_equal_n0;                       // To pre-calculate whether eviction is corrupted due to closeby writes
+    reg  [ASSOCIATIVITY   - 1 : 0] tag_equal_n0, tag_equal_n1;         // To pre-calculate whether eviction is corrupted due to closeby writes
         
     assign hit_set_wire  = (tag_valid & tag_match);
     assign cache_hit     = |hit_set_wire;    
@@ -294,6 +296,7 @@ module Data_Cache #(
                     tag_valid[i] <= tag_valid_wire[i];
                     
                     tag_equal_n0[i] <= (tag_del_2 == tag_from_ram[i]);
+                    tag_equal_n1[i] <= (tag_del_3 == tag_from_ram[i]);
                     
                     tag_ram_out_dearray[TAG_WIDTH * i +: TAG_WIDTH] <= tag_from_ram[i];
                     dirty_ram_out_dearray[i] <= dirty_from_ram[i];
@@ -331,8 +334,7 @@ module Data_Cache #(
     reg                            dirty_to_ram_del_1, dirty_to_ram_del_2;
     reg                            equal_addr0, equal_addr1;                            // For deciding the eviction data
     reg                            equal_sect0, equal_sect1;                            
-    wire                           equal_tag0;
-    reg                            equal_tag1;                             
+    wire                           equal_tag0,  equal_tag1;                             
     reg                            equal_addr1_pre_1, equal_sect1_pre_1;                  
     wire                           equal_r0, equal_r1;
     wire                           equal_e0, equal_e1;
@@ -345,16 +347,25 @@ module Data_Cache #(
     assign equal_e1 = equal_addr1 & equal_tag1;
     
     assign equal_r0 = equal_addr0 & equal_sect0 & equal_tag0;
-    assign equal_r1 = equal_addr1 & equal_sect0 & equal_tag1;
+    assign equal_r1 = equal_addr1 & equal_sect1 & equal_tag1;
     
     // Eviction equal, set selection multiplexer 
     Multiplexer #(
         .ORDER(a),
         .WIDTH(1)
-    ) evict_equal_set_mux (
+    ) evict_equal_n0_set_mux (
         .SELECT(set_select),
         .IN(tag_equal_n0),
         .OUT(equal_tag0)
+    );
+    
+    Multiplexer #(
+        .ORDER(a),
+        .WIDTH(1)
+    ) evict_equal_n1_set_mux (
+        .SELECT(set_select),
+        .IN(tag_equal_n1),
+        .OUT(equal_tag1)
     );
     
     always @(posedge CLK) begin
@@ -372,7 +383,6 @@ module Data_Cache #(
             
             equal_addr1       <= equal_addr1_pre_1;
             equal_sect1       <= equal_sect1_pre_1;
-            equal_tag1        <= equal_tag0;
             
             // Requires previous data and addresses    
             word_address_del_3 <= word_address_del_2;
