@@ -36,7 +36,8 @@ module FEEDBACK_CONTROLE(
     output [31:0]UPDATED_RS1_VALUE,
     output [31:0]UPDATED_RS2_VALUE,
     output MUX_RS1_SEL,
-    output MUX_RS2_SEL
+    output MUX_RS2_SEL,
+    output STALL_1CYCLE
     );
     
     reg [31:0]UPDATED_RS1_VALUE_L;
@@ -46,6 +47,7 @@ module FEEDBACK_CONTROLE(
     
     reg [4:0] RD_SHIFTREG [4:0];
     reg       RD_WB_VALID_SHIFTREG [4:0];
+    reg       STALL_1CYCLE_L;
     reg FLAG;
     initial
     begin
@@ -57,10 +59,10 @@ module FEEDBACK_CONTROLE(
     begin
       if(EN)
       begin
-//            if(STALL_ENABLE)
-//            begin
+            if(STALL_ENABLE)
+            begin
             
-                FLAG <= 1'b0;
+                
                 RD_SHIFTREG[0] <= RD_OUT;
                 RD_SHIFTREG[1] <= RD_SHIFTREG[0];
                 RD_SHIFTREG[2] <= RD_SHIFTREG[1];
@@ -72,23 +74,23 @@ module FEEDBACK_CONTROLE(
                 RD_WB_VALID_SHIFTREG[2] <= RD_WB_VALID_SHIFTREG[1];
                 RD_WB_VALID_SHIFTREG[3] <= RD_WB_VALID_SHIFTREG[2];
                 RD_WB_VALID_SHIFTREG[4] <= RD_WB_VALID_SHIFTREG[3];
-//            end
-//            else
-//            begin
+            end
+            else
+            begin
             
-//                FLAG <= 1'b1;
-//                RD_SHIFTREG[0] <= 5'd0;
-//                RD_SHIFTREG[1] <= RD_SHIFTREG[0];
-//                RD_SHIFTREG[2] <= RD_SHIFTREG[1];
-//                RD_SHIFTREG[3] <= RD_SHIFTREG[2];
-//                RD_SHIFTREG[4] <= RD_SHIFTREG[3];
                 
-//                RD_WB_VALID_SHIFTREG[0] <= 1'b0;
-//                RD_WB_VALID_SHIFTREG[1] <= RD_WB_VALID_SHIFTREG[0];
-//                RD_WB_VALID_SHIFTREG[2] <= RD_WB_VALID_SHIFTREG[1];
-//                RD_WB_VALID_SHIFTREG[3] <= RD_WB_VALID_SHIFTREG[2];
-//                RD_WB_VALID_SHIFTREG[4] <= RD_WB_VALID_SHIFTREG[3];
-//            end
+             //   RD_SHIFTREG[0] <= 5'd0;
+                RD_SHIFTREG[1] <= 5'd0;//RD_SHIFTREG[0];
+                RD_SHIFTREG[2] <= RD_SHIFTREG[1];
+                RD_SHIFTREG[3] <= RD_SHIFTREG[2];
+                RD_SHIFTREG[4] <= RD_SHIFTREG[3];
+                
+        //        RD_WB_VALID_SHIFTREG[0] <= 1'b0;
+                RD_WB_VALID_SHIFTREG[1] <= 1'b0;//RD_WB_VALID_SHIFTREG[0];
+                RD_WB_VALID_SHIFTREG[2] <= RD_WB_VALID_SHIFTREG[1];
+                RD_WB_VALID_SHIFTREG[3] <= RD_WB_VALID_SHIFTREG[2];
+                RD_WB_VALID_SHIFTREG[4] <= RD_WB_VALID_SHIFTREG[3];
+            end
        end
     end
     always@(*)
@@ -100,32 +102,38 @@ module FEEDBACK_CONTROLE(
             begin
                 UPDATED_RS1_VALUE_L = ALU_OUT_EX_MEM1_WIRE;
                 MUX_RS1_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b1;
             end
             else 
             if(RS1_SEL == RD_SHIFTREG[1] && RD_WB_VALID_SHIFTREG[1] == 1'b1)
             begin
                 UPDATED_RS1_VALUE_L = ALU_OUT_EX_MEM1;
                 MUX_RS1_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else if(RS1_SEL == RD_SHIFTREG[2] && RD_WB_VALID_SHIFTREG[2] == 1'b1)
             begin
                 UPDATED_RS1_VALUE_L = ALU_OUT_MEM1_MEM2;
                 MUX_RS1_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else if(RS1_SEL == RD_SHIFTREG[3] && RD_WB_VALID_SHIFTREG[3] == 1'b1)
             begin
                 UPDATED_RS1_VALUE_L = ALU_OUT_MEM2_MEM3;
                 MUX_RS1_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else if(RS1_SEL == RD_SHIFTREG[4] && RD_WB_VALID_SHIFTREG[4] == 1'b1)
             begin
                 UPDATED_RS1_VALUE_L = ALU_OUT_MEM3_WB;
                 MUX_RS1_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else
             begin
                 UPDATED_RS1_VALUE_L = 32'd0;
                 MUX_RS1_SEL_L = 1'b0;
+                STALL_1CYCLE_L = 1'b0;
             end
             
           
@@ -133,32 +141,38 @@ module FEEDBACK_CONTROLE(
             begin
                 UPDATED_RS2_VALUE_L = ALU_OUT_EX_MEM1_WIRE;
                 MUX_RS2_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b1;
             end
             else 
             if(RS2_SEL == RD_SHIFTREG[1] && RD_WB_VALID_SHIFTREG[1] == 1'b1)
             begin
                 UPDATED_RS2_VALUE_L = ALU_OUT_EX_MEM1;
                 MUX_RS2_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else if(RS2_SEL == RD_SHIFTREG[2] && RD_WB_VALID_SHIFTREG[2] == 1'b1)
             begin
                 UPDATED_RS2_VALUE_L = ALU_OUT_MEM1_MEM2;
                 MUX_RS2_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else if(RS2_SEL == RD_SHIFTREG[3] && RD_WB_VALID_SHIFTREG[3] == 1'b1)
             begin
                 UPDATED_RS2_VALUE_L = ALU_OUT_MEM2_MEM3;
                 MUX_RS2_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end
             else if(RS2_SEL == RD_SHIFTREG[4] && RD_WB_VALID_SHIFTREG[4] == 1'b1)
             begin
                 UPDATED_RS2_VALUE_L = ALU_OUT_MEM3_WB;
                 MUX_RS2_SEL_L = 1'b1;
+                STALL_1CYCLE_L = 1'b0;
             end        
             else
             begin
                 UPDATED_RS2_VALUE_L = 32'd0;
                 MUX_RS2_SEL_L = 1'b0;
+                STALL_1CYCLE_L = 1'b0;
             end
 //          end
 //          else
@@ -196,5 +210,5 @@ module FEEDBACK_CONTROLE(
     assign UPDATED_RS2_VALUE = UPDATED_RS2_VALUE_L;
     assign MUX_RS1_SEL = MUX_RS1_SEL_L && STALL_ENABLE;
     assign MUX_RS2_SEL = MUX_RS2_SEL_L && STALL_ENABLE;
-    
+    assign STALL_1CYCLE = STALL_1CYCLE_L;
 endmodule

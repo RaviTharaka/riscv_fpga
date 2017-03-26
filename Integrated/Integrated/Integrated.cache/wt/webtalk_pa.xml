@@ -3,7 +3,7 @@
 <!--The data in this file is primarily intended for consumption by Xilinx tools.
 The structure and the elements are likely to change over the next few releases.
 This means code written to parse this file will need to be revisited each subsequent release.-->
-<application name="pa" timeStamp="Tue Mar 07 13:45:20 2017">
+<application name="pa" timeStamp="Sun Mar 26 11:55:35 2017">
 <section name="Project Information" visible="false">
 <property name="ProjectID" value="42e25a25e0c84aceb34ec77a6158157f" type="ProjectID"/>
 <property name="ProjectIteration" value="1" type="ProjectIteration"/>
@@ -36,18 +36,18 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="SetTopNode" value="5" type="JavaHandler"/>
 <property name="ShowView" value="2" type="JavaHandler"/>
 <property name="SimulationClose" value="3" type="JavaHandler"/>
-<property name="SimulationRelaunch" value="189" type="JavaHandler"/>
-<property name="SimulationRestart" value="33" type="JavaHandler"/>
-<property name="SimulationRun" value="22" type="JavaHandler"/>
+<property name="SimulationRelaunch" value="198" type="JavaHandler"/>
+<property name="SimulationRestart" value="45" type="JavaHandler"/>
+<property name="SimulationRun" value="23" type="JavaHandler"/>
 <property name="SimulationRunAll" value="6" type="JavaHandler"/>
-<property name="SimulationRunForTime" value="355" type="JavaHandler"/>
+<property name="SimulationRunForTime" value="376" type="JavaHandler"/>
 <property name="ToolsTemplates" value="1" type="JavaHandler"/>
 <property name="UpgradeIP" value="2" type="JavaHandler"/>
 <property name="ViewTaskRTLAnalysis" value="3" type="JavaHandler"/>
 <property name="ViewTaskSynthesis" value="4" type="JavaHandler"/>
-<property name="WaveformOpenConfiguration" value="1" type="JavaHandler"/>
-<property name="WaveformRenameObject" value="6" type="JavaHandler"/>
-<property name="WaveformSaveConfiguration" value="17" type="JavaHandler"/>
+<property name="WaveformOpenConfiguration" value="2" type="JavaHandler"/>
+<property name="WaveformRenameObject" value="24" type="JavaHandler"/>
+<property name="WaveformSaveConfiguration" value="18" type="JavaHandler"/>
 <property name="WaveformSaveConfigurationAs" value="1" type="JavaHandler"/>
 <property name="ZoomIn" value="29" type="JavaHandler"/>
 <property name="ZoomOut" value="16" type="JavaHandler"/>
@@ -75,8 +75,8 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="ExpRunMenu_LAUNCH_RUNS" value="1" type="GuiResourceData"/>
 <property name="ExpRunMenu_MAKE_ACTIVE" value="1" type="GuiResourceData"/>
 <property name="ExpRunTreePanel_EXP_RUN_TREE_TABLE" value="8" type="GuiResourceData"/>
-<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="310" type="GuiResourceData"/>
-<property name="FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE" value="113" type="GuiResourceData"/>
+<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="316" type="GuiResourceData"/>
+<property name="FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE" value="114" type="GuiResourceData"/>
 <property name="GettingStartedView_OPEN_PROJECT" value="1" type="GuiResourceData"/>
 <property name="GettingStartedView_RECENT_PROJECTS" value="4" type="GuiResourceData"/>
 <property name="GraphicalView_ZOOM_FIT" value="3" type="GuiResourceData"/>
@@ -86,8 +86,8 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="HPopupTitle_CLOSE" value="2" type="GuiResourceData"/>
 <property name="IPStatusSectionPanel_UPGRADE_SELECTED" value="1" type="GuiResourceData"/>
 <property name="MainMenuMgr_EDIT" value="4" type="GuiResourceData"/>
-<property name="MainMenuMgr_FILE" value="15" type="GuiResourceData"/>
-<property name="MainMenuMgr_OPEN_RECENT_PROJECT" value="10" type="GuiResourceData"/>
+<property name="MainMenuMgr_FILE" value="17" type="GuiResourceData"/>
+<property name="MainMenuMgr_OPEN_RECENT_PROJECT" value="12" type="GuiResourceData"/>
 <property name="MainMenuMgr_REPORT" value="2" type="GuiResourceData"/>
 <property name="MainMenuMgr_TOOLS" value="2" type="GuiResourceData"/>
 <property name="MainWinMenuMgr_LAYOUT" value="2" type="GuiResourceData"/>
@@ -108,13 +108,13 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="PACommandNames_REPORT_IP_STATUS" value="1" type="GuiResourceData"/>
 <property name="PACommandNames_SCHEMATIC" value="5" type="GuiResourceData"/>
 <property name="PACommandNames_SET_AS_TOP" value="5" type="GuiResourceData"/>
-<property name="PACommandNames_SIMULATION_LIVE_RESTART" value="33" type="GuiResourceData"/>
-<property name="PACommandNames_SIMULATION_LIVE_RUN" value="423" type="GuiResourceData"/>
+<property name="PACommandNames_SIMULATION_LIVE_RESTART" value="45" type="GuiResourceData"/>
+<property name="PACommandNames_SIMULATION_LIVE_RUN" value="444" type="GuiResourceData"/>
 <property name="PACommandNames_SIMULATION_LIVE_RUN_ALL" value="6" type="GuiResourceData"/>
-<property name="PACommandNames_SIMULATION_RELAUNCH" value="196" type="GuiResourceData"/>
+<property name="PACommandNames_SIMULATION_RELAUNCH" value="205" type="GuiResourceData"/>
 <property name="PACommandNames_SIMULATION_RESET" value="9" type="GuiResourceData"/>
 <property name="PACommandNames_SIMULATION_RUN" value="5" type="GuiResourceData"/>
-<property name="PACommandNames_SIMULATION_RUN_BEHAVIORAL" value="22" type="GuiResourceData"/>
+<property name="PACommandNames_SIMULATION_RUN_BEHAVIORAL" value="23" type="GuiResourceData"/>
 <property name="PACommandNames_UPGRADE_IP" value="1" type="GuiResourceData"/>
 <property name="PACommandNames_ZOOM_IN" value="24" type="GuiResourceData"/>
 <property name="PACommandNames_ZOOM_OUT" value="11" type="GuiResourceData"/>
@@ -134,10 +134,10 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="PropertiesView_AUTOMATICALLY_UPDATE" value="1" type="GuiResourceData"/>
 <property name="RDICommands_LINE_COMMENT" value="67" type="GuiResourceData"/>
 <property name="RDICommands_UNDO" value="1" type="GuiResourceData"/>
-<property name="RDICommands_WAVEFORM_OPEN_CONFIGURATION" value="1" type="GuiResourceData"/>
+<property name="RDICommands_WAVEFORM_OPEN_CONFIGURATION" value="2" type="GuiResourceData"/>
 <property name="RDICommands_WAVEFORM_SAVE_CONFIGURATION" value="1" type="GuiResourceData"/>
 <property name="RDICommands_WAVEFORM_SAVE_CONFIGURATION_AS" value="1" type="GuiResourceData"/>
-<property name="RDIViews_WAVEFORM_VIEWER" value="663" type="GuiResourceData"/>
+<property name="RDIViews_WAVEFORM_VIEWER" value="929" type="GuiResourceData"/>
 <property name="ReportTimingSummaryDialog_GROUP" value="9" type="GuiResourceData"/>
 <property name="SaveProjectUtils_CANCEL" value="1" type="GuiResourceData"/>
 <property name="SaveProjectUtils_SAVE" value="8" type="GuiResourceData"/>
@@ -145,8 +145,9 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="SelectMenu_HIGHLIGHT" value="4" type="GuiResourceData"/>
 <property name="SelectMenu_MARK" value="4" type="GuiResourceData"/>
 <property name="SimpleOutputProductDialog_GENERATE_OUTPUT_PRODUCTS_IMMEDIATELY" value="3" type="GuiResourceData"/>
-<property name="SimulationObjectsPanel_SIMULATION_OBJECTS_TREE_TABLE" value="133" type="GuiResourceData"/>
-<property name="SimulationScopesPanel_SIMULATION_SCOPES_TREE_TABLE" value="182" type="GuiResourceData"/>
+<property name="SimulationLiveRunForComp_SPECIFY_TIME_AND_UNITS" value="2" type="GuiResourceData"/>
+<property name="SimulationObjectsPanel_SIMULATION_OBJECTS_TREE_TABLE" value="206" type="GuiResourceData"/>
+<property name="SimulationScopesPanel_SIMULATION_SCOPES_TREE_TABLE" value="215" type="GuiResourceData"/>
 <property name="SrcChooserPanel_ADD_CONFIGURABLE_IP_FILES" value="2" type="GuiResourceData"/>
 <property name="SrcChooserPanel_ADD_FILES_BELOW_TO_THIS_SIMULATION_SET" value="5" type="GuiResourceData"/>
 <property name="SrcChooserPanel_ADD_HDL_AND_NETLIST_FILES_TO_YOUR_PROJECT" value="14" type="GuiResourceData"/>
@@ -165,12 +166,15 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="TimingItemFlatTablePanel_TABLE" value="34" type="GuiResourceData"/>
 <property name="UpgradeIP_CONVERT_IP_TO_CORE_CONTAINER_AND_SET" value="1" type="GuiResourceData"/>
 <property name="UpgradeIP_OK" value="1" type="GuiResourceData"/>
-<property name="WaveformNameTree_WAVEFORM_NAME_TREE" value="372" type="GuiResourceData"/>
+<property name="WaveformNameTree_WAVEFORM_NAME_TREE" value="653" type="GuiResourceData"/>
+<property name="WaveformView_ADD_MARKER" value="2" type="GuiResourceData"/>
+<property name="WaveformView_NEXT_MARKER" value="2" type="GuiResourceData"/>
+<property name="WaveformView_PREVIOUS_MARKER" value="6" type="GuiResourceData"/>
 </item>
 <item name="Other">
-<property name="GuiMode" value="52" type="GuiMode"/>
+<property name="GuiMode" value="3" type="GuiMode"/>
 <property name="BatchMode" value="0" type="BatchMode"/>
-<property name="TclMode" value="29" type="TclMode"/>
+<property name="TclMode" value="2" type="TclMode"/>
 </item>
 </section>
 </application>

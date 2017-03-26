@@ -33,6 +33,11 @@ module PIPELINE #(
         
      )
     (
+    
+    //////////////////////////////////
+    //  INSTRUCTION CACHE SIGNALS   //
+    //////////////////////////////////
+    
     //Standard inputs
     input                                           CLK,
     
@@ -47,6 +52,19 @@ module PIPELINE #(
     //Output to cache
     output                                          BRANCH_TAKEN,
     output              [ADDR_WIDTH - 1 : 0]        BRANCH_ADDRESS,
+    
+    //////////////////////////////
+    //    DATA CACHE SIGNALS    //
+    //////////////////////////////
+    
+    output     reg     [    2      - 1 : 0]        CONTROL_DATA_CACHE,              // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
+    output     reg     [ADDR_WIDTH - 1 : 0]        ADDR_TO_DATA_CACHE,
+    output     reg     [DATA_WIDTH - 1 : 0]        DATA_TO_DATA_CACHE,
+    input              [DATA_WIDTH - 1 : 0]        DATA_TO_PROC,
+          
+    output     reg                                 PROC_READY,
+    input                                          CACHE_READY_DATA,
+           
     
     //Temporary outputs
     output              [DATA_WIDTH - 1 : 0]        ALU,
@@ -194,7 +212,8 @@ module PIPELINE #(
     reg                  [  3   :   0   ]                    COUNTER1;
     //COUNTER2 is used to flush the IF ID EX stages of the pipeline at a true branch instruction
     reg                  [  3   :   0   ]                    COUNTER2;
-    //VAriable to enable writeback in JAL and JALR
+    
+    wire                                                     STALL_1CYCLE;
     initial
     begin
         //stalls when off
@@ -204,13 +223,17 @@ module PIPELINE #(
         BRANCH_TAKEN_REG        =   1'b0;
         COUNTER1                =   4'd0;
         COUNTER2                =   4'd0;
+        PROC_READY              =   1'b1;
+        CONTROL_DATA_CACHE      =   2'b00;
+        ADDR_TO_DATA_CACHE      =   32'd0;
+        DATA_TO_DATA_CACHE      =   32'd0;
     end
     
     assign  ALU                 =   ALU_OUT_EX_MEM1;
     assign  COMPAR              =   COMP_OUT_EX_MEM1;
     assign  BRANCH_TAKEN        =   BRANCH_TAKEN_FINAL;
-    assign  BRANCH_ADDRESS      =   ALU_OUT_EX_MEM1;
-    assign  PIPELINE_STALL      =   STALL_ENABLE_1 && STALL_ENABLE_2;
+    assign  BRANCH_ADDRESS      =   ALU_OUT_WIRE;
+    assign  PIPELINE_STALL      =   STALL_ENABLE_1 && CACHE_READY_DATA;
    
     IDSTAGE ID(
         .INS_IN(INS_IF_ID),
@@ -253,9 +276,9 @@ module PIPELINE #(
     FEEDBACK_CONTROLE FBC(
         .RS1_SEL(RS1_SEL_WIRE),
         .RS2_SEL(RS2_SEL_WIRE),
-        .EN(CACHE_READY),
+        .EN(CACHE_READY && CACHE_READY_DATA),
         .STALL_ENABLE(STALL_ENABLE_1),        //used to flush the shift reg if a branch is taken
-        .RD_VALID(WB_VALID_ID_EX_WIRE && STALL_ENABLE_1 && STALL_ENABLE_2 && !(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL)),
+        .RD_VALID(WB_VALID_ID_EX_WIRE && /*STALL_ENABLE_1 &&*/ STALL_ENABLE_2 && !(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL) && !STALL_1CYCLE),
         .RD_OUT(RD_ID_EX_WIRE),
         .CLK(CLK),
         .ALU_OUT_EX_MEM1_WIRE(ALU_OUT_WIRE),
@@ -266,7 +289,8 @@ module PIPELINE #(
         .UPDATED_RS1_VALUE(FEEDBACK_VALUE_RS1),
         .UPDATED_RS2_VALUE(FEEDBACK_VALUE_RS2),
         .MUX_RS1_SEL(ENABLE_FEEDBACK_RS1_CNT),
-        .MUX_RS2_SEL(ENABLE_FEEDBACK_RS2_CNT)
+        .MUX_RS2_SEL(ENABLE_FEEDBACK_RS2_CNT),
+        .STALL_1CYCLE(STALL_1CYCLE)
         );
         
     MUX_2to1_32bit FB_MUX_1(
@@ -288,17 +312,18 @@ module PIPELINE #(
     wire [31:0] ALU_OUT_MEM2_MEM3_WIRE;
     reg  [3:0] WEA;
     reg   ENA;
-    blk_mem_gen_0 DATA_CACHE(
-    .addra(ALU_OUT_EX_MEM1),
-    .clka(CLK),
-    .dina(RS2_EX_MEM1),
-    .douta(ALU_OUT_MEM2_MEM3_WIRE),
-    .ena(ENA),
-    .wea(WEA)
-    );    
+    
+//    blk_mem_gen_0 DATA_CACHE(
+//    .addra(ALU_OUT_EX_MEM1),
+//    .clka(CLK),
+//    .dina(RS2_EX_MEM1),
+//    .douta(ALU_OUT_MEM2_MEM3_WIRE),
+//    .ena(ENA),
+//    .wea(WEA)
+//    );    
     
   
-       
+    
     
     always@(*)
     begin
@@ -306,79 +331,99 @@ module PIPELINE #(
     //STALL_ENABLE signal generation
     //This signal stalls the full pipeline upto EX stage and keeps the remaining DM stages and WB stages running
     //Feedback is done to the ID_EX buffer
-
-           if(OPCODE_EX_MEM1 == 7'b0000011) 
-               STALL_ENABLE_1 =  1'b0;
-           else if(OPCODE_MEM1_MEM2 == 7'b0000011) 
-               STALL_ENABLE_1 =  1'b0;
-           else if(OPCODE_MEM2_MEM3 == 7'b0000011) 
-               STALL_ENABLE_1 =  1'b0;
-           else if(OPCODE_MEM3_WB == 7'b0000011) 
-               STALL_ENABLE_1 =  1'b0;
+                
+//           if(STALL_1CYCLE)
+//               STALL_ENABLE_1 =  1'b0;
+//           else
+            if(OPCODE_EX_MEM1 == 7'b0000011 && CACHE_READY) 
+               STALL_ENABLE_1 =  1'b0;// && CACHE_READY_DATA;
+           else if(OPCODE_MEM1_MEM2 == 7'b0000011 && CACHE_READY) 
+               STALL_ENABLE_1 =  1'b0;// && CACHE_READY_DATA;
+           else if(OPCODE_MEM2_MEM3 == 7'b0000011 && CACHE_READY) 
+               STALL_ENABLE_1 =  1'b0;// && CACHE_READY_DATA;
+           else if(OPCODE_MEM3_WB == 7'b0000011 && CACHE_READY) 
+               STALL_ENABLE_1 =  1'b0;// && CACHE_READY_DATA
            else
-               STALL_ENABLE_1 =  1'b1;
+               STALL_ENABLE_1 =  1'b1;// && CACHE_READY_DATA;
            
     //branch output controle
-           if(OPCODE_EX_MEM1 == 7'b1100011)
-               BRANCH_TAKEN_FINAL = COMP_OUT_EX_MEM1;    
-           else if(OPCODE_EX_MEM1 == 7'b1101111 || OPCODE_EX_MEM1 == 7'b1100111)
+           if(OPCODE_ID_EX == 7'b1100011)
+               BRANCH_TAKEN_FINAL = COMP_OUT_WIRE;    
+           else if(OPCODE_ID_EX == 7'b1101111 || OPCODE_ID_EX == 7'b1100111)
                BRANCH_TAKEN_FINAL = 1'b1;    
            else
                BRANCH_TAKEN_FINAL = 1'b0;
                
     //branch detection at EX stage
-           if(OPCODE_ID_EX == 7'b1100011 || OPCODE_ID_EX == 7'b1101111 || OPCODE_ID_EX == 7'b1100111)
-               STALL_ENABLE_2 = 1'b0;    
-           else
-               STALL_ENABLE_2 = 1'b1;
+//           if(OPCODE_ID_EX == 7'b1100011 || OPCODE_ID_EX == 7'b1101111 || OPCODE_ID_EX == 7'b1100111)
+//               STALL_ENABLE_2 = 1'b0;    
+//           else
+//               STALL_ENABLE_2 = 1'b1;
                
                
-           if(OPCODE_ID_EX == 7'b0000011 && FLAG)
-           begin
-               STALL_ENABLE_2 = 1'b0;   
-               FLAG = 1'b0; 
-           end
-           else
-           begin
-               STALL_ENABLE_2 = 1'b1;
-               FLAG = 1'b1;
-           end
+//           if(OPCODE_ID_EX == 7'b0000011 && FLAG)
+//           begin
+//               STALL_ENABLE_2 = 1'b0;   
+//               FLAG = 1'b0; 
+//           end
+//           else
+//           begin
+//               STALL_ENABLE_2 = 1'b1;
+//               FLAG = 1'b1;
+//           end
+           
     //Emulation signal generation which are used running the block ram  
-    
-           if(OPCODE_EX_MEM1 == 7'b0100011)
+           if(OPCODE_ID_EX == 7'b0100011)                     // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
            begin
                WEA = 4'd1;
                ENA = 4'd1;
+               CONTROL_DATA_CACHE = {1 && !BRANCH_TAKEN && CACHE_READY,0 && !BRANCH_TAKEN && CACHE_READY};
+           end
+           else if(OPCODE_ID_EX /*OPCODE_EX_MEM1*/ == 7'b0000011)//7'b0100011)                     // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
+           begin
+               WEA = 4'd1;
+               ENA = 4'd1;
+               CONTROL_DATA_CACHE = {0 && !BRANCH_TAKEN && CACHE_READY,1 && !BRANCH_TAKEN && CACHE_READY};
            end
            //read from cache
            else if(OPCODE_EX_MEM1 == 7'b0000011) 
            begin
                WEA = 4'd0;
                ENA = 4'd1;
+               CONTROL_DATA_CACHE = 2'b01;
            end
            else if(OPCODE_MEM1_MEM2 == 7'b0000011) 
            begin
                WEA = 4'd0;
                ENA = 4'd1; 
+               CONTROL_DATA_CACHE = 2'b01;
            end
            else if(OPCODE_MEM2_MEM3 == 7'b0000011) 
            begin
                WEA = 4'd0;
                ENA = 4'd1; 
+               CONTROL_DATA_CACHE = 2'b01;
            end
            else
            begin
                WEA = 4'd0;
                ENA = 4'd0; 
+               CONTROL_DATA_CACHE = 2'b00;
            end            
+           
+           
+           //data cache assignements
+               ADDR_TO_DATA_CACHE = ALU_OUT_WIRE;//ALU_OUT_EX_MEM1;
+               DATA_TO_DATA_CACHE = RS2_ID_EX;//RS2_EX_MEM1;  
+               
     end
     
     
     //Used to select values correctly from data cache emulator or buffer
-    always@(OPCODE_MEM3_WB or ALU_OUT_MEM2_MEM3_WIRE or ALU_OUT_MEM3_WB)
+    always@(OPCODE_MEM3_WB or DATA_TO_PROC /*ALU_OUT_MEM2_MEM3_WIRE*/ or ALU_OUT_MEM3_WB)
     begin
            if(OPCODE_MEM3_WB ==  7'b0000011)
-                WB_DATA_FINAL = ALU_OUT_MEM2_MEM3_WIRE;
+                WB_DATA_FINAL = DATA_TO_PROC;//ALU_OUT_MEM2_MEM3_WIRE;
            else
                 WB_DATA_FINAL = ALU_OUT_MEM3_WB;
     end
@@ -388,103 +433,106 @@ module PIPELINE #(
     
     always@(posedge CLK)
     begin
+    
+    if(CACHE_READY_DATA)
+    begin
         if(CACHE_READY)
         begin
-        //registering branch taken control signal
-        if(BRANCH_TAKEN_FINAL)
-            BRANCH_TAKEN_REG <= 1'b1;
-        
-        if(COUNTER2 == 32'd2)
-        begin
-            BRANCH_TAKEN_REG <= 1'b0;
-        end
-             
-        if(BRANCH_TAKEN_REG && CACHE_READY)
-            COUNTER2 <= COUNTER2 + 1;
-        else if(CACHE_READY)
-            COUNTER2 <= 32'd0;
+            //registering branch taken control signal
+            if(BRANCH_TAKEN_FINAL)
+                BRANCH_TAKEN_REG <= 1'b1;
             
-        
-        
-            
-        if(STALL_ENABLE_1)
-        begin
-        
-            if(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL)
+            if(COUNTER2 == 32'd2)
             begin
-             //updating ID/EX buffer0
-          
-             //data signals
-            
-             PC_ID_EX    <=  32'd0; 
-             RD_ID_EX <= 5'd0;
-             RS1_ID_EX<= 32'd0;
-             RS2_ID_EX<= 32'd0;
-             IMM_ID_EX<= 32'd0;
-             OPCODE_ID_EX<= 7'd0;
-             FUNCT_ID_EX<= 10'd0;
-             WB_VALID_ID_EX <=1'b0;
-             RS1_SEL_ID_EX <= 5'd0 ;
-             RS2_SEL_ID_EX <= 5'd0 ;
-           
-             //Control signals
-             ALU_CNT_ID_EX <= 4'd0;     
-             COMP_CNT_ID_EX <= 2'd0;
-             MUX1_CNT_ID_EX <= 1'b0;
-             MUX2_CNT_ID_EX <= 1'b0;
-             MUX3_CNT_ID_EX <= 1'b0;
-           
-             
-             COUNTER1 <= 32'd0;
-           
-           //Updating EX/MEM1 buffer
-           
-           
-             OPCODE_EX_MEM1<= 7'd0;
-             RS2_EX_MEM1      <=  5'd0;
-             ALU_OUT_EX_MEM1  <=  32'd0; 
-             COMP_OUT_EX_MEM1 <=  1'b0;
-             RD_EX_MEM1 <= 5'd0;
-             WB_VALID_EX_MEM1 <= 1'b0;
-             
+                BRANCH_TAKEN_REG <= 1'b0;
             end
-            else
+                 
+            if(BRANCH_TAKEN_REG && CACHE_READY)
+                COUNTER2 <= COUNTER2 + 1;
+            else if(CACHE_READY)
+                COUNTER2 <= 32'd0;
+            
+        
+        
+            
+            if(STALL_ENABLE_1)
             begin
-            //updating ID/EX buffer0
-           
-            //data signals
             
-            PC_ID_EX    <=  PC_IF_ID; 
-            RD_ID_EX <= RD_ID_EX_WIRE;
-            RS1_ID_EX<= FEEDBACK_RS1_FINAL;
-            RS2_ID_EX<= FEEDBACK_RS2_FINAL;
-            IMM_ID_EX<= IMM_ID_EX_WIRE;
-            OPCODE_ID_EX<= OPCODE_ID_EX_WIRE;
-            FUNCT_ID_EX<= FUNCT_ID_EX_WIRE;
-            WB_VALID_ID_EX <=WB_VALID_ID_EX_WIRE && STALL_ENABLE_2;
-            RS1_SEL_ID_EX <= RS1_SEL_WIRE ;
-            RS2_SEL_ID_EX <= RS2_SEL_WIRE ;
-            
-            //Control signals
-            ALU_CNT_ID_EX <= ALU_CNT_WIRE;     
-            COMP_CNT_ID_EX <= COMP_CNT_WIRE;
-            MUX1_CNT_ID_EX <= MUX1_CNT_WIRE;
-            MUX2_CNT_ID_EX <= MUX2_CNT_WIRE;
-            MUX3_CNT_ID_EX <= MUX3_CNT_WIRE;
-            
-            
-            COUNTER1 <= 32'd0;
-            
-            //Updating EX/MEM1 buffer
-            
-            
-            OPCODE_EX_MEM1<= OPCODE_ID_EX;
-            RS2_EX_MEM1      <=  RS2_ID_EX;
-            ALU_OUT_EX_MEM1  <=  ALU_OUT_WIRE; 
-            COMP_OUT_EX_MEM1 <=  COMP_OUT_WIRE;
-            RD_EX_MEM1 <= RD_ID_EX;
-            WB_VALID_EX_MEM1 <= WB_VALID_ID_EX;
-            end
+                if(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL)
+                begin
+                 //updating ID/EX buffer0
+              
+                 //data signals
+                
+                 PC_ID_EX    <=  32'd0; 
+                 RD_ID_EX <= 5'd0;
+                 RS1_ID_EX<= 32'd0;
+                 RS2_ID_EX<= 32'd0;
+                 IMM_ID_EX<= 32'd0;
+                 OPCODE_ID_EX<= 7'd0;
+                 FUNCT_ID_EX<= 10'd0;
+                 WB_VALID_ID_EX <=1'b0;
+                 RS1_SEL_ID_EX <= 5'd0 ;
+                 RS2_SEL_ID_EX <= 5'd0 ;
+               
+                 //Control signals
+                 ALU_CNT_ID_EX <= 4'd0;     
+                 COMP_CNT_ID_EX <= 2'd0;
+                 MUX1_CNT_ID_EX <= 1'b0;
+                 MUX2_CNT_ID_EX <= 1'b0;
+                 MUX3_CNT_ID_EX <= 1'b0;
+               
+                 
+                 COUNTER1 <= 32'd0;
+               
+               //Updating EX/MEM1 buffer
+               
+               
+                 OPCODE_EX_MEM1<= 7'd0;
+                 RS2_EX_MEM1      <=  5'd0;
+                 ALU_OUT_EX_MEM1  <=  32'd0; 
+                 COMP_OUT_EX_MEM1 <=  1'b0;
+                 RD_EX_MEM1 <= 5'd0;
+                 WB_VALID_EX_MEM1 <= 1'b0;
+                 
+                end
+                else
+                begin
+                //updating ID/EX buffer0
+               
+                //data signals
+                
+                PC_ID_EX    <=  PC_IF_ID; 
+                RD_ID_EX <= RD_ID_EX_WIRE;
+                RS1_ID_EX<= FEEDBACK_RS1_FINAL;
+                RS2_ID_EX<= FEEDBACK_RS2_FINAL;
+                IMM_ID_EX<= IMM_ID_EX_WIRE;
+                OPCODE_ID_EX<= OPCODE_ID_EX_WIRE;
+                FUNCT_ID_EX<= FUNCT_ID_EX_WIRE;
+                WB_VALID_ID_EX <=WB_VALID_ID_EX_WIRE && STALL_ENABLE_2;
+                RS1_SEL_ID_EX <= RS1_SEL_WIRE ;
+                RS2_SEL_ID_EX <= RS2_SEL_WIRE ;
+                
+                //Control signals
+                ALU_CNT_ID_EX <= ALU_CNT_WIRE;     
+                COMP_CNT_ID_EX <= COMP_CNT_WIRE;
+                MUX1_CNT_ID_EX <= MUX1_CNT_WIRE;
+                MUX2_CNT_ID_EX <= MUX2_CNT_WIRE;
+                MUX3_CNT_ID_EX <= MUX3_CNT_WIRE;
+                
+                
+                COUNTER1 <= 32'd0;
+                
+                //Updating EX/MEM1 buffer
+                
+                
+                OPCODE_EX_MEM1<= OPCODE_ID_EX;
+                RS2_EX_MEM1      <=  RS2_ID_EX;
+                ALU_OUT_EX_MEM1  <=  ALU_OUT_WIRE; 
+                COMP_OUT_EX_MEM1 <=  COMP_OUT_WIRE;
+                RD_EX_MEM1 <= RD_ID_EX;
+                WB_VALID_EX_MEM1 <= WB_VALID_ID_EX;
+                end
            
         end
         else
@@ -495,18 +543,32 @@ module PIPELINE #(
             
             if(COUNTER1 == 32'd3)
             begin
-                 if(RS1_SEL_ID_EX == RD_MEM3_WB && WB_VALID_MEM3_WB == 1'b1 )
+                 if(RS1_SEL_ID_EX == RD_MEM3_WB && WB_VALID_MEM3_WB == 1'b1 && OPCODE_MEM3_WB == 7'b0000011)                           
+                           RS1_ID_EX<= DATA_TO_PROC;
+                 else if(RS1_SEL_ID_EX == RD_MEM3_WB && WB_VALID_MEM3_WB == 1'b1)
                            RS1_ID_EX<= FEEDBACK_RS1_FINAL;
-                 if(RS2_SEL_ID_EX == RD_MEM3_WB && WB_VALID_MEM3_WB == 1'b1 )
+                 if(RS2_SEL_ID_EX == RD_MEM3_WB && WB_VALID_MEM3_WB == 1'b1 && OPCODE_MEM3_WB == 7'b0000011)
+                           RS2_ID_EX<= DATA_TO_PROC;
+                 else if(RS2_SEL_ID_EX == RD_MEM3_WB && WB_VALID_MEM3_WB == 1'b1)
                            RS2_ID_EX<= FEEDBACK_RS2_FINAL;
             end
             
            //makes sure garbage values are not fed into the pipeline at a stall
             WB_VALID_EX_MEM1 <= 1'b0; 
             OPCODE_EX_MEM1   <=  7'd0; 
+            
+//            OPCODE_EX_MEM1   <= 7'd0;
+//                  //  RS2_EX_MEM1      <=  RS2_ID_EX;
+//            ALU_OUT_EX_MEM1  <=  32'd0; 
+//            COMP_OUT_EX_MEM1 <=  1'b0;
+//            RD_EX_MEM1 <= 5'd0;
+//            WB_VALID_EX_MEM1 <= 1'b0;
  
         end
-
+         //Updating EX/MEM1 buffer
+                       
+       
+        
 
        
         //updating MEM1/MEM2 buffer
@@ -533,6 +595,8 @@ module PIPELINE #(
         COMP_OUT_MEM3_WB <= COMP_OUT_MEM2_MEM3;
         RD_MEM3_WB <= RD_MEM2_MEM3;
         WB_VALID_MEM3_WB <= WB_VALID_MEM2_MEM3;            
+      end
+      
       end
     end
 endmodule

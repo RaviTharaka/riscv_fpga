@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="synth_2" LaunchPart="xc7a200tfbg676-2" LaunchTime="1488871868">
-  <File Type="PA-TCL" Name="RISCV_PROCESSOR.tcl"/>
   <File Type="RDS-PROPCONSTRS" Name="RISCV_PROCESSOR_drc_synth.rpt"/>
+  <File Type="PA-TCL" Name="RISCV_PROCESSOR.tcl"/>
   <File Type="RDS-RDS" Name="RISCV_PROCESSOR.vds"/>
   <File Type="RDS-UTIL" Name="RISCV_PROCESSOR_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="RISCV_PROCESSOR_utilization_synth.pb"/>

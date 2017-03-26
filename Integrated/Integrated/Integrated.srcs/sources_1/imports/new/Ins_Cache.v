@@ -129,7 +129,7 @@ module Ins_Cache #(
             // Output regsiter for the cache architecture
             if (CACHE_READY) begin
                 DATA_TO_PROC <= data_to_proc;
-                PC_TO_PROC   <= pc_del_2;
+                PC_TO_PROC <= pc_del_2;
             end         
             
             // Pipeline for previous address requests (processor level PC)
@@ -611,10 +611,10 @@ module Ins_Cache #(
     
     initial begin
         // Processor always starts with the zeroth instruction
-        pc                    = 32'h0001016c;   
-        pc_del_1              = 32'h00010168;
-        pc_del_2              = 32'h00010164;
-        
+        pc                    = 32'h0001015C;   
+        pc_del_1              = 32'h00010158;
+        pc_del_2              = 32'h00010154;
+                
         word_address_del_1    = pc_del_1[BYTES_PER_WORD                +: (B - T - 5)      ];
         tag_address_del_1     = pc_del_1[(BYTES_PER_WORD + B - 5)      +: (S - a - B)      ];
         tag_del_1             = pc_del_1[(ADDR_WIDTH - 1)              -: TAG_WIDTH        ];
