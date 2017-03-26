@@ -21,168 +21,303 @@
 
 module Test_RISCV_PROCESSOR ();
     // Fixed parameters
-    localparam ADDR_WIDTH = 32;
-    localparam DATA_WIDTH = 32;
+    localparam ADDR_WIDTH        = 32;
+    localparam DATA_WIDTH        = 32;
     
     // Primary parameters for processor instantiation
-    parameter S              = 17;                    // Size of the cache will be 2^S bits
-    parameter B              = 9;                     // Size of a block will be 2^B bits
-    parameter a              = 1;                     // Associativity of the cache would be 2^a
-    parameter T              = 1;                     // Width to depth translation amount
-    parameter W              = 7;                     // Width of the L2-L1 bus would be 2^W
-    
-    // Related to testbench
-    parameter L2_DELAY       = 7;
-    parameter RAM_ADDR_WIDTH = 10;
-    parameter RAM_DEPTH      = 1 << RAM_ADDR_WIDTH;
-    
-    // Calculated parameters
-    localparam L2_BUS_WIDTH = 1 << W;
-    localparam L2_BURST     = 1 << (B - W);
+    parameter S                  = 17;                    // Size of the cache will be 2^S bits
+    parameter B                  = 9;                     // Size of a block will be 2^B bits
+    parameter a                  = 1;                     // Associativity of the cache would be 2^a
+    parameter T                  = 1;                     // Width to depth translation amount
+    parameter W                  = 7;                     // Width of the L2-L1 bus would be 2^W
+    parameter V                  = 2;                     // Size of the victim cache will be 2^V cache lines
+    parameter N                  = 3;                     // Number of stream buffers
+    parameter n                  = 1;                     // Depth of stream buffers would be 2^n
+    parameter p                  = 2;                     // Prefetch queue's depth is 2^p
         
+    // Related to testbench
+    parameter L2_DELAY_RD        = 7;                       // Read delay of the L2 cache (from start of request upto first reply)
+    parameter L2_DELAY_WR        = 4;                       // Write delay of the L2 cache (from sending last data to WR_COMPLETE acknowledgement)
+    
+    parameter INS_RAM_ADDR_WIDTH = 16;                      // 2^INS_RAM_ADDR_WIDTH is the depth of the main instruction memory of the system
+    parameter DAT_RAM_ADDR_WIDTH = 16;                      // 2^INS_RAM_ADDR_WIDTH is the depth of the main instruction memory of the system
+            
+    // Calculated parameters
+    localparam L2_BUS_WIDTH      = 1 << W;
+    localparam L2_BURST          = 1 << (B - W);
+    localparam INS_RAM_DEPTH     = 1 << INS_RAM_ADDR_WIDTH;
+    localparam DAT_RAM_DEPTH     = 1 << DAT_RAM_ADDR_WIDTH;
+                
     // Constants
     reg TRUE  = 1;
     reg FALSE = 0;    
-        
-    reg CLK;
-    reg RSTN;
-              
-    wire [ADDR_WIDTH   - 3 : 0] ADDR_TO_L2;
-    wire                        ADDR_TO_L2_READY;
-    wire                        ADDR_TO_L2_VALID;
-        
-    reg  [L2_BUS_WIDTH - 1 : 0] DATA_FROM_L2;
-    reg                         DATA_FROM_L2_VALID;
-    wire                        DATA_FROM_L2_READY;
-        
+    
+    // Standard inputs    
+    reg                           CLK;
+    reg                           RSTN;             
+             
+    // Output address bus from Instruction Cache to Memory               
+    wire [ADDR_WIDTH     - 3 : 0] ADDR_TO_L2_INS;
+    wire                          ADDR_TO_L2_READY_INS;
+    wire                          ADDR_TO_L2_VALID_INS;
+    
+    // Input data bus to Insruction Cache from Memory     
+    reg  [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_INS;
+    reg                           DATA_FROM_L2_VALID_INS;
+    wire                          DATA_FROM_L2_READY_INS;
+    
+    // Write bus between Data Cache and Memory 
+    wire                          WR_TO_L2_READY_DAT;
+    wire                          WR_TO_L2_VALID_DAT;
+    wire [ADDR_WIDTH - 2 - 1 : 0] WR_ADDR_TO_L2_DAT;
+    wire [L2_BUS_WIDTH   - 1 : 0] DATA_TO_L2_DAT;
+    wire                          WR_CONTROL_TO_L2_DAT;
+    wire                          WR_COMPLETE_DAT;
+    
+    // Read address from Data Cache to Memory
+    wire                          RD_ADDR_TO_L2_READY_DAT;
+    wire                          RD_ADDR_TO_L2_VALID_DAT;
+    wire [ADDR_WIDTH - 2 - 1 : 0] RD_ADDR_TO_L2_DAT;
+    
+    // Read data to Data Cache from Memory
+    reg                           DATA_FROM_L2_VALID_DAT;
+    wire                          DATA_FROM_L2_READY_DAT;
+    reg  [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_DAT;
+       
     RISCV_PROCESSOR # (
         .S(S),
         .B(B),
         .a(a),
         .T(T),
         .W(W),
-        .L2_DELAY(L2_DELAY)
+        .N(N), 
+        .n(n),      
+        .p(p),      
+        .V(V), 
+        .L2_DELAY_RD(L2_DELAY_RD)
     ) uut (
+        // Standard inputs
         .CLK(CLK),
         .RSTN(RSTN),
-                       
-        .ADDR_TO_L2(ADDR_TO_L2),
-        .ADDR_TO_L2_READY(ADDR_TO_L2_READY),
-        .ADDR_TO_L2_VALID(ADDR_TO_L2_VALID),
+        // Output address bus from Instruction Cache to Memory               
+        .ADDR_TO_L2_INS(ADDR_TO_L2_INS),
+        .ADDR_TO_L2_READY_INS(ADDR_TO_L2_READY_INS),
+        .ADDR_TO_L2_VALID_INS(ADDR_TO_L2_VALID_INS),
+        // Input data bus to Insruction Cache from Memory   
+        .DATA_FROM_L2_INS(DATA_FROM_L2_INS),
+        .DATA_FROM_L2_VALID_INS(DATA_FROM_L2_VALID_INS),
+        .DATA_FROM_L2_READY_INS(DATA_FROM_L2_READY_INS),
+        // Write bus between Data Cache and Memory 
+        .WR_TO_L2_READY_DAT(WR_TO_L2_READY_DAT),
+        .WR_TO_L2_VALID_DAT(WR_TO_L2_VALID_DAT),
+        .WR_ADDR_TO_L2_DAT(WR_ADDR_TO_L2_DAT),
+        .DATA_TO_L2_DAT(DATA_TO_L2_DAT),
+        .WR_CONTROL_TO_L2_DAT(WR_CONTROL_TO_L2_DAT),
+        .WR_COMPLETE_DAT(WR_COMPLETE_DAT),
+        // Read address from Data Cache to Memory
+        .RD_ADDR_TO_L2_READY_DAT(RD_ADDR_TO_L2_READY_DAT),
+        .RD_ADDR_TO_L2_VALID_DAT(RD_ADDR_TO_L2_VALID_DAT),
+        .RD_ADDR_TO_L2_DAT(RD_ADDR_TO_L2_DAT),
+        // Read data to Data Cache from Memory
+        .DATA_FROM_L2_VALID_DAT(DATA_FROM_L2_VALID_DAT),
+        .DATA_FROM_L2_READY_DAT(DATA_FROM_L2_READY_DAT),
+        .DATA_FROM_L2_DAT(DATA_FROM_L2_DAT)   
         
-        .DATA_FROM_L2(DATA_FROM_L2),
-        .DATA_FROM_L2_VALID(DATA_FROM_L2_VALID),
-        .DATA_FROM_L2_READY(DATA_FROM_L2_READY)
     );
     
-    //L2 Cache emulator
-    reg [DATA_WIDTH - 1 : 0] ins_memory [0: RAM_DEPTH - 1] ;  
-        
-    integer fileTrace, readTrace;
-    integer fileResult, writeResult;
-    integer i, j, k, l;
+    //L2 Cache emulators
+    reg [DATA_WIDTH - 1 : 0] ins_memory [0: INS_RAM_DEPTH - 1] ;  
+    reg [DATA_WIDTH - 1 : 0] dat_memory [0: DAT_RAM_DEPTH - 1] ;  
+            
+    integer j, k, l;
     integer PC_no;
         
-    reg read_address;
     initial begin
         CLK  = 0;
         RSTN = 1;
-        read_address = 0;
-        //PROC_READY = 0;
-        //BRANCH = 0;
+        
         PC_no = 0;
-        l2_ready = 1;
-        fileTrace = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/trace.txt", "r");
-        fileResult = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/result.txt", "w");
-        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Ins_Memory5.txt", ins_memory);
-                     
-        #106;
-        RSTN = 1;
-//        //PROC_READY = 1;
-//        //BRANCH = 1;
-//        //readTrace = $fscanf(fileTrace, "%x ", BRANCH_ADDR_IN);
-//        #10;
-//        for (i = 0; i > -1; i = i + 1) begin
-//            if (read_address) begin
-//              // readTrace = $fscanf(fileTrace, "%x ", BRANCH_ADDR_IN);
-//                fileResult = $fopen("E:/University/GrandFinale/Project/Simulation_Traces/Pipeline/result.txt", "a");                        
-//                $fwrite(fileResult,"%x\n",DATA_TO_PROC);
-//                $fclose(fileResult);
-//                PC_no = PC_no + 1;
-//            end
-//            #10;
-//        end 
+        l2_ready_ins = 1;
+        l2_ready_dat = 1;
+        
+        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Ins_Memory4.txt", ins_memory);
+        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Dat_Memory2.txt", dat_memory);
         
     end
     
-//    always @(posedge CLK ) begin
-//        read_address <= CACHE_READY & PROC_READY;
-//    end
+    ///////////////////////////////////////////
+    // Instruction memory
+    ///////////////////////////////////////////
     
-    reg [L2_BURST - 1 : 0] l2_input_state;
+    reg [L2_BURST   - 1 : 0] l2_input_state_ins;
     
-    wire fifo_empty;    
-    reg mem_requests [0 : L2_DELAY - 3];
-    reg [ADDR_WIDTH - 3 : 0] mem_addresses [0 : L2_DELAY - 3];
+    reg                      mem_requests_ins  [0 : L2_DELAY_RD - 3];
+    reg [ADDR_WIDTH - 3 : 0] mem_addresses_ins [0 : L2_DELAY_RD - 3];
+    
+    reg [ADDR_WIDTH - 1 : 0] output_addr_reg_ins  = 0;
+    reg [L2_BURST   - 1 : 0] output_data_state_ins = 0;
         
-    reg [ADDR_WIDTH - 1 : 0] output_addr_reg = 0;
-    reg [L2_BURST - 1 : 0] output_data_state = 0;
-    reg l2_ready;
-        
-    assign ADDR_TO_L2_READY = l2_ready & DATA_FROM_L2_READY;    
+    reg                      l2_ready_ins;
     
+    assign ADDR_TO_L2_READY_INS = l2_ready_ins & DATA_FROM_L2_READY_INS;    
+                        
     always @(posedge CLK) begin
-        if (DATA_FROM_L2_READY) begin
-            mem_requests[0] <= ADDR_TO_L2_VALID && ADDR_TO_L2_READY;
-            mem_addresses[0] <= ADDR_TO_L2;
-            for (j = 1; j < L2_DELAY; j = j + 1) begin
-                mem_requests[j] <= mem_requests[j - 1];
-                mem_addresses[j] <= mem_addresses[j - 1];
+        if (DATA_FROM_L2_READY_INS) begin
+            mem_requests_ins [0] <= ADDR_TO_L2_VALID_INS && ADDR_TO_L2_READY_INS;
+            mem_addresses_ins[0] <= ADDR_TO_L2_INS;
+            for (j = 1; j < L2_DELAY_RD; j = j + 1) begin
+                mem_requests_ins [j] <= mem_requests_ins [j - 1];
+                mem_addresses_ins[j] <= mem_addresses_ins[j - 1];
             end
         
-            if (ADDR_TO_L2_VALID && ADDR_TO_L2_READY) begin
-                l2_ready <= 0;
-                l2_input_state <= 1;           
-            end else if (l2_input_state != 0) begin
-                l2_input_state <= l2_input_state << 1;
+            if (ADDR_TO_L2_VALID_INS && ADDR_TO_L2_READY_INS) begin
+                l2_ready_ins       <= 0;
+                l2_input_state_ins <= 1;           
+            end else if (l2_input_state_ins != 0) begin
+                l2_input_state_ins <= l2_input_state_ins << 1;
             end
             
-            if(l2_input_state[L2_BURST - 2]) begin
-                l2_ready <= 1;
+            if(l2_input_state_ins[L2_BURST - 2]) begin
+                l2_ready_ins <= 1;
             end
             
-            if (mem_requests[L2_DELAY - 3]) begin
-                output_addr_reg <= {mem_addresses[L2_DELAY - 3], 2'b00};
-                output_data_state <= 1;
-            end else if (output_data_state != 0) begin
-                output_data_state <= output_data_state << 1;
+            if (mem_requests_ins[L2_DELAY_RD - 3]) begin
+                output_addr_reg_ins   <= {mem_addresses_ins[L2_DELAY_RD - 3], 2'b00};
+                output_data_state_ins <= 1;
+            end else if (output_data_state_ins != 0) begin
+                output_data_state_ins <= output_data_state_ins << 1;
             end
             
-            if (output_data_state != 0) begin            
-                DATA_FROM_L2_VALID <= 1;
+            if (output_data_state_ins != 0) begin            
+                DATA_FROM_L2_VALID_INS <= 1;
             end else begin
-                DATA_FROM_L2_VALID <= 0;
+                DATA_FROM_L2_VALID_INS <= 0;
             end
             
             for (k = 0; k < L2_BURST; k = k + 1) begin
-                if (output_data_state[k] == 1) begin
+                if (output_data_state_ins[k] == 1) begin
                     for (l = 0; l < (1 << W - 5); l = l + 1) begin
-                        DATA_FROM_L2[l * DATA_WIDTH +: DATA_WIDTH] <= ins_memory[{output_addr_reg[RAM_ADDR_WIDTH - 1 : 2 + B - W - T], {(B - W - T){1'b0}}} + {k, {(W - 5){1'b0}}}  + l];
+                        DATA_FROM_L2_INS[l * DATA_WIDTH +: DATA_WIDTH] <= ins_memory[{output_addr_reg_ins[INS_RAM_ADDR_WIDTH - 1 : 2 + B - 5 - T], {(B - 5 - T){1'b0}}} + {k, {(W - 5){1'b0}}} + l];
                     end
                 end
             end
         end      
     end
     
+    ///////////////////////////////////////////
+    // Data memory
+    ///////////////////////////////////////////
+      
+    // Read port of data memory
+    reg  [L2_BURST   - 1 : 0] l2_rd_input_state_dat;
+    
+    reg                       rd_mem_requests_dat  [0 : L2_DELAY_RD - 3];
+    reg  [ADDR_WIDTH - 3 : 0] rd_mem_addresses_dat [0 : L2_DELAY_RD - 3];
+        
+    reg  [ADDR_WIDTH - 1 : 0] rd_output_addr_reg_dat   = 0;
+    reg  [L2_BURST   - 1 : 0] rd_output_data_state_dat = 0;
+    reg                       l2_ready_dat;
+        
+    assign RD_ADDR_TO_L2_READY_DAT = l2_ready_dat & DATA_FROM_L2_READY_DAT;    
+    
+    wire [32    - 1 : 0] temp1 = {rd_output_addr_reg_dat[DAT_RAM_ADDR_WIDTH + 2 - 1 : 2 + B - 5    ], {(B - 5    ){1'b0}}};
+    wire [B - 5 - 1 : 0] temp2 = {rd_output_addr_reg_dat[2 + B - 5               - 1 : 2 + W - 5 + T], {(W - 5 + T){1'b0}}};
+    
+    genvar ap,aq;
+    wire [31 : 0] read_value [L2_BURST - 1 : 0][(1 << W - 5) - 1 : 0];
+    generate
+        for (ap = 0; ap < L2_BURST; ap = ap + 1) begin
+            for (aq = 0; aq < (1 << W - 5); aq = aq + 1) begin
+                wire [B - 5 - 1 : 0] temp3 = temp2 + {ap[B - W - 1 : 0], {(W - 5){1'b0}}};
+                
+                assign read_value[ap][aq] = dat_memory[temp1 + temp3 + aq];
+            end
+        end
+    endgenerate
+        
+    always @(posedge CLK) begin
+        if (DATA_FROM_L2_READY_DAT) begin
+            rd_mem_requests_dat [0] <= RD_ADDR_TO_L2_VALID_DAT && RD_ADDR_TO_L2_READY_DAT;
+            rd_mem_addresses_dat[0] <= RD_ADDR_TO_L2_DAT;
+            for (j = 1; j < L2_DELAY_RD; j = j + 1) begin
+                rd_mem_requests_dat [j] <= rd_mem_requests_dat [j - 1];
+                rd_mem_addresses_dat[j] <= rd_mem_addresses_dat[j - 1];
+            end
+        
+            if (RD_ADDR_TO_L2_VALID_DAT && RD_ADDR_TO_L2_READY_DAT) begin
+                l2_ready_dat          <= 0;
+                l2_rd_input_state_dat <= 1;           
+            end else if (l2_rd_input_state_dat != 0) begin
+                l2_rd_input_state_dat <= l2_rd_input_state_dat << 1;
+            end
+            
+            if(l2_rd_input_state_dat[L2_BURST - 2]) begin
+                l2_ready_dat       <= 1;
+            end
+            
+            if (rd_mem_requests_dat[L2_DELAY_RD - 3]) begin
+                rd_output_addr_reg_dat   <= {rd_mem_addresses_dat[L2_DELAY_RD - 3], 2'b00};
+                rd_output_data_state_dat <= 1;
+            end else if (rd_output_data_state_dat != 0) begin
+                rd_output_data_state_dat <= rd_output_data_state_dat << 1;
+            end
+            
+            if (rd_output_data_state_dat != 0) begin            
+                DATA_FROM_L2_VALID_DAT <= 1;
+            end else begin
+                DATA_FROM_L2_VALID_DAT <= 0;
+            end
+            
+            for (k = 0; k < L2_BURST; k = k + 1) begin
+                if (rd_output_data_state_dat[k] == 1) begin
+                    for (l = 0; l < (1 << W - 5); l = l + 1) begin
+                        DATA_FROM_L2_DAT[l * DATA_WIDTH +: DATA_WIDTH] <= read_value[k][l];                                
+                    end
+                end
+            end
+        end      
+    end
+    
+    // Write port of data memory     
+    integer writeFile;
+    
+    reg  [L2_DELAY_WR + L2_BURST  - 1 : 0] l2_wr_input_state = 1;
+    
+    assign WR_TO_L2_READY_DAT = |(l2_wr_input_state[L2_BURST - 1 : 0]); 
+    assign WR_COMPLETE_DAT    = l2_wr_input_state[L2_DELAY_WR + L2_BURST  - 1];
+    
+    integer current_section = 0;
+    integer m;
+    
+    always @(posedge CLK) begin
+        if (WR_TO_L2_READY_DAT) begin
+            if (WR_TO_L2_VALID_DAT) begin
+                l2_wr_input_state <= l2_wr_input_state << 1;
+                current_section   <= current_section + 1;  
+                
+                for (m = 0; m < (1 << W - 5); m = m + 1) begin
+                    dat_memory[WR_ADDR_TO_L2_DAT[ADDR_WIDTH - 3 : 0] + current_section * (1 << (W - 5)) + m] <= DATA_TO_L2_DAT[m * DATA_WIDTH +: DATA_WIDTH];
+                end
+                
+                writeFile = $fopen("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/DataMemoryWrites.trac", "a");
+                $fwrite("%d \t %d \t%d \n", WR_ADDR_TO_L2_DAT, DATA_TO_L2_DAT, WR_CONTROL_TO_L2_DAT);  
+                $fclose(writeFile);     
+            end    
+        end else begin
+            if (l2_wr_input_state[L2_DELAY_WR + L2_BURST  - 1]) begin
+                l2_wr_input_state <= 1;
+            end else begin
+                l2_wr_input_state <= l2_wr_input_state << 1;
+            end
+            
+            current_section   <= 0;
+        end
+    end
+     
     always begin
         #5;
         CLK = !CLK;
     end
-    
-//    always@(PROC_READY)
-//    begin
-//        PROC_READY_1 = PROC_READY == 1'b1;
-//    end
     
     
 endmodule
