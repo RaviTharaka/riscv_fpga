@@ -16,5 +16,6 @@
 !*.java
 !*.xml
 !*.iml
+!*.vsdx
 *.xml
 *.xml
