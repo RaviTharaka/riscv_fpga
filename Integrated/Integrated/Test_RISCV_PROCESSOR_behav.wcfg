@@ -11,21 +11,6 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-<<<<<<< HEAD
-      <ZoomStartTime time="595333333fs"></ZoomStartTime>
-      <ZoomEndTime time="780933334fs"></ZoomEndTime>
-      <Cursor1Time time="1000000000fs"></Cursor1Time>
-   </zoom_setting>
-   <column_width_setting>
-      <NameColumnWidth column_width="240"></NameColumnWidth>
-      <ValueColumnWidth column_width="57"></ValueColumnWidth>
-   </column_width_setting>
-   <WVObjectSize size="10" />
-   <wave_markers>
-      <marker time="340133000" label="" />
-      <marker time="449910000" label="" />
-      <marker time="782800000" label="" />
-=======
       <ZoomStartTime time="984388000fs"></ZoomStartTime>
       <ZoomEndTime time="1242988001fs"></ZoomEndTime>
       <Cursor1Time time="1027488000fs"></Cursor1Time>
@@ -37,7 +22,6 @@
    <WVObjectSize size="11" />
    <wave_markers>
       <marker time="1027488000" label="" />
->>>>>>> origin/master
    </wave_markers>
    <wvobject fp_name="/Test_RISCV_PROCESSOR/CLK" type="logic">
       <obj_property name="ElementShortName">CLK</obj_property>
@@ -79,17 +63,11 @@
       <wvobject fp_name="group286" type="group">
          <obj_property name="label">Memory Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-         <wvobject fp_name="group551" type="group">
-            <obj_property name="label">Addr to L2</obj_property>
-            <obj_property name="DisplayName">label</obj_property>
-=======
          <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group551" type="group">
             <obj_property name="label">Addr to L2</obj_property>
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="isExpanded"></obj_property>
->>>>>>> origin/master
             <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/ADDR_TO_L2_READY" type="logic">
                <obj_property name="ElementShortName">ADDR_TO_L2_READY</obj_property>
                <obj_property name="ObjectShortName">ADDR_TO_L2_READY</obj_property>
@@ -120,10 +98,7 @@
          <wvobject fp_name="group550" type="group">
             <obj_property name="label">Data from L2</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
             <obj_property name="isExpanded"></obj_property>
->>>>>>> origin/master
             <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/DATA_FROM_L2_VALID" type="logic">
                <obj_property name="ElementShortName">DATA_FROM_L2_VALID</obj_property>
                <obj_property name="ObjectShortName">DATA_FROM_L2_VALID</obj_property>
@@ -689,8 +664,6 @@
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/PC_TO_PROC" type="array">
             <obj_property name="ElementShortName">PC_TO_PROC[31:0]</obj_property>
             <obj_property name="ObjectShortName">PC_TO_PROC[31:0]</obj_property>
-<<<<<<< HEAD
-=======
          </wvobject>
       </wvobject>
       <wvobject fp_name="group2676" type="group">
@@ -2960,7 +2933,6 @@
                   <obj_property name="ObjectShortName">[0]</obj_property>
                </wvobject>
             </wvobject>
->>>>>>> origin/master
          </wvobject>
       </wvobject>
       <wvobject fp_name="group4386" type="group">
@@ -2986,11 +2958,8 @@
             <wvobject fp_name="vbus4352" type="vbus">
                <obj_property name="label">7</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[255]" type="logic">
                   <obj_property name="ElementShortName">[255]</obj_property>
                   <obj_property name="ObjectShortName">[255]</obj_property>
@@ -3123,11 +3092,8 @@
             <wvobject fp_name="vbus4319" type="vbus">
                <obj_property name="label">6</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[223]" type="logic">
                   <obj_property name="ElementShortName">[223]</obj_property>
                   <obj_property name="ObjectShortName">[223]</obj_property>
@@ -3260,11 +3226,8 @@
             <wvobject fp_name="vbus4286" type="vbus">
                <obj_property name="label">5</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[191]" type="logic">
                   <obj_property name="ElementShortName">[191]</obj_property>
                   <obj_property name="ObjectShortName">[191]</obj_property>
@@ -3397,11 +3360,8 @@
             <wvobject fp_name="vbus4253" type="vbus">
                <obj_property name="label">4</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[159]" type="logic">
                   <obj_property name="ElementShortName">[159]</obj_property>
                   <obj_property name="ObjectShortName">[159]</obj_property>
@@ -3534,11 +3494,8 @@
             <wvobject fp_name="vbus4220" type="vbus">
                <obj_property name="label">3</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[127]" type="logic">
                   <obj_property name="ElementShortName">[127]</obj_property>
                   <obj_property name="ObjectShortName">[127]</obj_property>
@@ -3671,11 +3628,8 @@
             <wvobject fp_name="vbus4187" type="vbus">
                <obj_property name="label">2</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[95]" type="logic">
                   <obj_property name="ElementShortName">[95]</obj_property>
                   <obj_property name="ObjectShortName">[95]</obj_property>
@@ -3808,11 +3762,8 @@
             <wvobject fp_name="vbus4154" type="vbus">
                <obj_property name="label">1</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[63]" type="logic">
                   <obj_property name="ElementShortName">[63]</obj_property>
                   <obj_property name="ObjectShortName">[63]</obj_property>
@@ -3945,11 +3896,8 @@
             <wvobject fp_name="vbus4121" type="vbus">
                <obj_property name="label">0</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[0].line_memory /DATA_IN[31]" type="logic">
                   <obj_property name="ElementShortName">[31]</obj_property>
                   <obj_property name="ObjectShortName">[31]</obj_property>
@@ -4083,18 +4031,12 @@
          <wvobject fp_name="group3864" type="group">
             <obj_property name="label">DataIn1</obj_property>
             <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-            <wvobject fp_name="vbus3831" type="vbus">
-               <obj_property name="label">7</obj_property>
-               <obj_property name="DisplayName">label</obj_property>
-=======
             <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="vbus3831" type="vbus">
                <obj_property name="label">7</obj_property>
                <obj_property name="DisplayName">label</obj_property>
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[255]" type="logic">
                   <obj_property name="ElementShortName">[255]</obj_property>
                   <obj_property name="ObjectShortName">[255]</obj_property>
@@ -4227,11 +4169,8 @@
             <wvobject fp_name="vbus3798" type="vbus">
                <obj_property name="label">6</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[223]" type="logic">
                   <obj_property name="ElementShortName">[223]</obj_property>
                   <obj_property name="ObjectShortName">[223]</obj_property>
@@ -4364,11 +4303,8 @@
             <wvobject fp_name="vbus3765" type="vbus">
                <obj_property name="label">5</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[191]" type="logic">
                   <obj_property name="ElementShortName">[191]</obj_property>
                   <obj_property name="ObjectShortName">[191]</obj_property>
@@ -4501,11 +4437,8 @@
             <wvobject fp_name="vbus3732" type="vbus">
                <obj_property name="label">4</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[159]" type="logic">
                   <obj_property name="ElementShortName">[159]</obj_property>
                   <obj_property name="ObjectShortName">[159]</obj_property>
@@ -4638,11 +4571,8 @@
             <wvobject fp_name="vbus3699" type="vbus">
                <obj_property name="label">3</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[127]" type="logic">
                   <obj_property name="ElementShortName">[127]</obj_property>
                   <obj_property name="ObjectShortName">[127]</obj_property>
@@ -4775,11 +4705,8 @@
             <wvobject fp_name="vbus3666" type="vbus">
                <obj_property name="label">2</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[95]" type="logic">
                   <obj_property name="ElementShortName">[95]</obj_property>
                   <obj_property name="ObjectShortName">[95]</obj_property>
@@ -4912,11 +4839,8 @@
             <wvobject fp_name="vbus3633" type="vbus">
                <obj_property name="label">1</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[63]" type="logic">
                   <obj_property name="ElementShortName">[63]</obj_property>
                   <obj_property name="ObjectShortName">[63]</obj_property>
@@ -5049,11 +4973,8 @@
             <wvobject fp_name="vbus3600" type="vbus">
                <obj_property name="label">0</obj_property>
                <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-=======
                <obj_property name="CustomSignalColor">#008080</obj_property>
                <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
                <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/\ASSOC_LOOP[1].line_memory /DATA_IN[31]" type="logic">
                   <obj_property name="ElementShortName">[31]</obj_property>
                   <obj_property name="ObjectShortName">[31]</obj_property>
@@ -5199,55 +5120,40 @@
             <obj_property name="ElementShortName">pc[31:0]</obj_property>
             <obj_property name="ObjectShortName">pc[31:0]</obj_property>
             <obj_property name="label">PC - IF1</obj_property>
-<<<<<<< HEAD
-=======
             <obj_property name="CustomSignalColor">#FFA500</obj_property>
             <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/pc_del_1" type="array">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">pc_del_1[31:0]</obj_property>
             <obj_property name="ObjectShortName">pc_del_1[31:0]</obj_property>
             <obj_property name="label">PC - IF2</obj_property>
-<<<<<<< HEAD
-=======
             <obj_property name="CustomSignalColor">#FFA500</obj_property>
             <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/pc_del_2" type="array">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">pc_del_2[31:0]</obj_property>
             <obj_property name="ObjectShortName">pc_del_2[31:0]</obj_property>
             <obj_property name="label">PC - IF3</obj_property>
-<<<<<<< HEAD
-=======
             <obj_property name="CustomSignalColor">#FFA500</obj_property>
             <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/PC_IF_ID" type="array">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">PC_IF_ID[31:0]</obj_property>
             <obj_property name="ObjectShortName">PC_IF_ID[31:0]</obj_property>
             <obj_property name="label">PC - ID</obj_property>
-<<<<<<< HEAD
-=======
             <obj_property name="CustomSignalColor">#FFA500</obj_property>
             <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/PC_ID_EX" type="array">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">PC_ID_EX[31:0]</obj_property>
             <obj_property name="ObjectShortName">PC_ID_EX[31:0]</obj_property>
             <obj_property name="label">PC - EXE</obj_property>
-<<<<<<< HEAD
-=======
             <obj_property name="CustomSignalColor">#FFA500</obj_property>
             <obj_property name="UseCustomSignalColor">true</obj_property>
->>>>>>> origin/master
          </wvobject>
       </wvobject>
       <wvobject fp_name="group2239" type="group">
@@ -5300,10 +5206,6 @@
       <wvobject fp_name="group798" type="group">
          <obj_property name="label">Register file</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-         <obj_property name="isExpanded"></obj_property>
-=======
->>>>>>> origin/master
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ID/REG_ARRAY/REGISTER[0]" type="array">
             <obj_property name="ElementShortName">[0][31:0]</obj_property>
             <obj_property name="ObjectShortName">[0][31:0]</obj_property>
@@ -6697,10 +6599,6 @@
       <wvobject fp_name="group641" type="group">
          <obj_property name="label">Processor Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-<<<<<<< HEAD
-         <obj_property name="isExpanded"></obj_property>
-=======
->>>>>>> origin/master
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/CACHE_READY" type="logic">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">CACHE_READY</obj_property>
@@ -11075,8 +10973,6 @@
             </wvobject>
          </wvobject>
       </wvobject>
-<<<<<<< HEAD
-=======
    </wvobject>
    <wvobject fp_name="group3780" type="group">
       <obj_property name="label">Simulation</obj_property>
@@ -11161,6 +11057,5 @@
             <obj_property name="UseCustomSignalColor">true</obj_property>
          </wvobject>
       </wvobject>
->>>>>>> origin/master
    </wvobject>
 </wave_config>

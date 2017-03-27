@@ -208,6 +208,10 @@ module PIPELINE #(
     reg                                                      BRANCH_TAKEN_FINAL;
     //used to control dumping of unwanted instructions in IF ID EX stages if a branch is taken
     reg                                                      BRANCH_TAKEN_REG;
+    //to control jal instruction
+    reg                                                      BRANCH_JAL;
+    //to control jalr instruction
+    reg                                                      BRANCH_JALR; 
     //counter1 is used to find the fnal clock cycle when stall enable is given
     reg                  [  3   :   0   ]                    COUNTER1;
     //COUNTER2 is used to flush the IF ID EX stages of the pipeline at a true branch instruction
@@ -232,7 +236,7 @@ module PIPELINE #(
     assign  ALU                 =   ALU_OUT_EX_MEM1;
     assign  COMPAR              =   COMP_OUT_EX_MEM1;
     assign  BRANCH_TAKEN        =   BRANCH_TAKEN_FINAL;
-    assign  BRANCH_ADDRESS      =   ALU_OUT_WIRE;
+    assign  BRANCH_ADDRESS      =   BRANCH_JALR? ALU_OUT_WIRE : {ALU_OUT_WIRE[31:1],1'b0}; //setting branch address lsb to zero if jalr
     assign  PIPELINE_STALL      =   STALL_ENABLE_1 && CACHE_READY_DATA;
    
     IDSTAGE ID(
@@ -348,66 +352,54 @@ module PIPELINE #(
            
     //branch output controle
            if(OPCODE_ID_EX == 7'b1100011)
+           begin
                BRANCH_TAKEN_FINAL = COMP_OUT_WIRE;    
-           else if(OPCODE_ID_EX == 7'b1101111 || OPCODE_ID_EX == 7'b1100111)
-               BRANCH_TAKEN_FINAL = 1'b1;    
-           else
-               BRANCH_TAKEN_FINAL = 1'b0;
-               
-    //branch detection at EX stage
-//           if(OPCODE_ID_EX == 7'b1100011 || OPCODE_ID_EX == 7'b1101111 || OPCODE_ID_EX == 7'b1100111)
-//               STALL_ENABLE_2 = 1'b0;    
-//           else
-//               STALL_ENABLE_2 = 1'b1;
-               
-               
-//           if(OPCODE_ID_EX == 7'b0000011 && FLAG)
-//           begin
-//               STALL_ENABLE_2 = 1'b0;   
-//               FLAG = 1'b0; 
-//           end
-//           else
-//           begin
-//               STALL_ENABLE_2 = 1'b1;
-//               FLAG = 1'b1;
-//           end
-           
-    //Emulation signal generation which are used running the block ram  
-           if(OPCODE_ID_EX == 7'b0100011)                     // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
-           begin
-               WEA = 4'd1;
-               ENA = 4'd1;
-               CONTROL_DATA_CACHE = {1 && !BRANCH_TAKEN && CACHE_READY,0 && !BRANCH_TAKEN && CACHE_READY};
+               BRANCH_JAL         = 1'b0;
+               BRANCH_JALR        = 1'b0;
            end
-           else if(OPCODE_ID_EX /*OPCODE_EX_MEM1*/ == 7'b0000011)//7'b0100011)                     // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
+           else if(OPCODE_ID_EX == 7'b1101111)
            begin
-               WEA = 4'd1;
-               ENA = 4'd1;
-               CONTROL_DATA_CACHE = {0 && !BRANCH_TAKEN && CACHE_READY,1 && !BRANCH_TAKEN && CACHE_READY};
+               BRANCH_TAKEN_FINAL = 1'b1; 
+               BRANCH_JAL         = 1'b1;
+               BRANCH_JALR        = 1'b0;
+           end
+           else if(OPCODE_ID_EX == 7'b1100111)
+           begin
+               BRANCH_TAKEN_FINAL = 1'b1;  
+               BRANCH_JAL         = 1'b0;
+               BRANCH_JALR        = 1'b1;  
+           end
+           else
+           begin
+               BRANCH_TAKEN_FINAL = 1'b0;
+               BRANCH_JAL         = 1'b0;
+               BRANCH_JALR        = 1'b0;
+           end
+               
+    //Emulation signal generation which are used running the block ram  
+           if(OPCODE_ID_EX == 7'b0100011 && !BRANCH_TAKEN && CACHE_READY && STALL_ENABLE_1)                     // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
+           begin
+               CONTROL_DATA_CACHE = 2'b10;
+           end
+           else if(OPCODE_ID_EX == 7'b0000011 && !BRANCH_TAKEN && CACHE_READY && STALL_ENABLE_1)//7'b0100011)                     // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
+           begin
+               CONTROL_DATA_CACHE = 2'b01;
            end
            //read from cache
-           else if(OPCODE_EX_MEM1 == 7'b0000011) 
+           else if(OPCODE_EX_MEM1 == 7'b0000011 && !BRANCH_TAKEN && CACHE_READY && STALL_ENABLE_1) 
            begin
-               WEA = 4'd0;
-               ENA = 4'd1;
                CONTROL_DATA_CACHE = 2'b01;
            end
-           else if(OPCODE_MEM1_MEM2 == 7'b0000011) 
+           else if(OPCODE_MEM1_MEM2 == 7'b0000011 && !BRANCH_TAKEN && CACHE_READY && STALL_ENABLE_1) 
            begin
-               WEA = 4'd0;
-               ENA = 4'd1; 
                CONTROL_DATA_CACHE = 2'b01;
            end
-           else if(OPCODE_MEM2_MEM3 == 7'b0000011) 
+           else if(OPCODE_MEM2_MEM3 == 7'b0000011 && !BRANCH_TAKEN && CACHE_READY && STALL_ENABLE_1) 
            begin
-               WEA = 4'd0;
-               ENA = 4'd1; 
                CONTROL_DATA_CACHE = 2'b01;
            end
            else
            begin
-               WEA = 4'd0;
-               ENA = 4'd0; 
                CONTROL_DATA_CACHE = 2'b00;
            end            
            
@@ -457,8 +449,52 @@ module PIPELINE #(
             
             if(STALL_ENABLE_1)
             begin
-            
-                if(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL)
+                
+                
+                if(BRANCH_JAL)
+                begin
+                    PC_ID_EX    <=  32'd0; 
+                    RD_ID_EX <= 5'd0;
+                    RS1_ID_EX<= 32'd0;
+                    RS2_ID_EX<= 32'd0;
+                    IMM_ID_EX<= 32'd0;
+                    OPCODE_ID_EX<= 7'd0;
+                    FUNCT_ID_EX<= 10'd0;
+                    WB_VALID_ID_EX <=1'b0;
+                    RS1_SEL_ID_EX <= 5'd0 ;
+                    RS2_SEL_ID_EX <= 5'd0 ;
+                                
+                    OPCODE_EX_MEM1<= OPCODE_ID_EX;
+                    RS2_EX_MEM1      <=  5'd0;
+                    ALU_OUT_EX_MEM1  <=  PC_IF_ID; 
+                    COMP_OUT_EX_MEM1 <=  1'b0;
+                    RD_EX_MEM1 <= RD_ID_EX;
+                    WB_VALID_EX_MEM1 <= WB_VALID_ID_EX;
+                end
+                else if(BRANCH_JALR)
+                begin
+                
+                    PC_ID_EX    <=  32'd0; 
+                    RD_ID_EX <= 5'd0;
+                    RS1_ID_EX<= 32'd0;
+                    RS2_ID_EX<= 32'd0;
+                    IMM_ID_EX<= 32'd0;
+                    OPCODE_ID_EX<= 7'd0;
+                    FUNCT_ID_EX<= 10'd0;
+                    WB_VALID_ID_EX <=1'b0;
+                    RS1_SEL_ID_EX <= 5'd0 ;
+                    RS2_SEL_ID_EX <= 5'd0 ;
+                    
+                    
+                    OPCODE_EX_MEM1<= OPCODE_ID_EX;
+                    RS2_EX_MEM1      <=  5'd0;
+                    ALU_OUT_EX_MEM1  <=  PC_IF_ID; 
+                    COMP_OUT_EX_MEM1 <=  1'b0;
+                    RD_EX_MEM1 <= RD_ID_EX;
+                    WB_VALID_EX_MEM1 <= WB_VALID_ID_EX;
+                end
+                else
+                 if(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL)
                 begin
                  //updating ID/EX buffer0
               

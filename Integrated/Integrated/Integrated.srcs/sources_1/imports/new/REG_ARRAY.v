@@ -64,7 +64,7 @@ module REG_ARRAY(
     begin
         if(RD_WB_VALID_MEM3_WB)
         begin
-            REGISTER[RD_WB_MEM3_WB]= DATA_IN;
+            REGISTER[RD_WB_MEM3_WB] <= DATA_IN;
         end
         
 
