@@ -140,7 +140,7 @@ module Test_RISCV_PROCESSOR ();
         l2_ready_ins = 1;
         l2_ready_dat = 1;
         
-        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Ins_Memory2_looped.txt", ins_memory);
+        $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Ins_Traces/add_trace_ins.txt", ins_memory);
         $readmemh("E:/University/GrandFinale/Project/riscv_fpga/Simulation/RISCV_Processor/Dat_Memory2.txt", dat_memory);
         
     end
