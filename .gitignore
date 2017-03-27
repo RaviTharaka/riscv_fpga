@@ -17,5 +17,6 @@
 !*.xml
 !*.iml
 !*.vsdx
+!*.pdf
 *.xml
 *.xml
