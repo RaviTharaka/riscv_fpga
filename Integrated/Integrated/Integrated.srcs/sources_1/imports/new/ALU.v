@@ -37,7 +37,7 @@ module ALU(
                 4'b0000 :                               //ADD(I)
                     OUTPUT_REG = A + B;       
                 4'b0001 : 
-                    OUTPUT_REG = B - A;                 //SUB
+                    OUTPUT_REG = B +{~A + 1'b1};                 //SUB
                 4'b0010 :                               //SLT(I) and SLT(I)U
                     begin
                         if(A<B)

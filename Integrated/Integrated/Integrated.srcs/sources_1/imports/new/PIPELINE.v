@@ -282,7 +282,7 @@ module PIPELINE #(
         .RS2_SEL(RS2_SEL_WIRE),
         .EN(CACHE_READY && CACHE_READY_DATA),
         .STALL_ENABLE(STALL_ENABLE_1),        //used to flush the shift reg if a branch is taken
-        .RD_VALID(WB_VALID_ID_EX_WIRE && /*STALL_ENABLE_1 &&*/ STALL_ENABLE_2 && !(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL) && !STALL_1CYCLE),
+        .RD_VALID(WB_VALID_ID_EX_WIRE && /*STALL_ENABLE_1 &&*/   !(BRANCH_TAKEN_REG || BRANCH_TAKEN_FINAL)),
         .RD_OUT(RD_ID_EX_WIRE),
         .CLK(CLK),
         .ALU_OUT_EX_MEM1_WIRE(ALU_OUT_WIRE),
