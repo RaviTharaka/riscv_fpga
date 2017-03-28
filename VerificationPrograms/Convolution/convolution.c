@@ -10,7 +10,7 @@ int main(){
     int kernelCount = 3;
     int x[9] = {1,2,3,4,5,6,7,8,9};
     int y[9] ;
-    int h[3] = {0,1,0};
+    int h[3] = {1,2,1};
     for ( i = 0; i < sampleCount; i++ ){
         y[i] = 0;                       // set to zero before sum
         for ( j = 0; j < kernelCount; j++ ){
