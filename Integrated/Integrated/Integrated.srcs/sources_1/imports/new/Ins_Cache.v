@@ -611,9 +611,9 @@ module Ins_Cache #(
     
     initial begin
         // Processor always starts with the zeroth instruction
-        pc                    = 32'h0001007c;   
-        pc_del_1              = 32'h00010078;
-        pc_del_2              = 32'h00010074;
+        pc                    = 32'h00000008;   
+        pc_del_1              = 32'h00000004;
+        pc_del_2              = 32'h00000000;
                 
         word_address_del_1    = pc_del_1[BYTES_PER_WORD                +: (B - T - 5)      ];
         tag_address_del_1     = pc_del_1[(BYTES_PER_WORD + B - 5)      +: (S - a - B)      ];

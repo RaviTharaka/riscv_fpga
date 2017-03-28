@@ -11,22 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="768000000fs"></ZoomStartTime>
-      <ZoomEndTime time="914400001fs"></ZoomEndTime>
-      <Cursor1Time time="889600000fs"></Cursor1Time>
+      <ZoomStartTime time="5129000000fs"></ZoomStartTime>
+      <ZoomEndTime time="6065000001fs"></ZoomEndTime>
+      <Cursor1Time time="5285000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="259"></NameColumnWidth>
-      <ValueColumnWidth column_width="88"></ValueColumnWidth>
+      <NameColumnWidth column_width="217"></NameColumnWidth>
+      <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="12" />
-   <wave_markers>
-      <marker time="259600000" label="" />
-      <marker time="1500067000" label="" />
-      <marker time="1518333000" label="" />
-      <marker time="1650133000" label="" />
-      <marker time="879500000" label="" />
-   </wave_markers>
+   <WVObjectSize size="11" />
    <wvobject fp_name="/Test_RISCV_PROCESSOR/CLK" type="logic">
       <obj_property name="ElementShortName">CLK</obj_property>
       <obj_property name="ObjectShortName">CLK</obj_property>
@@ -52,14 +45,6 @@
       <obj_property name="ObjectShortName">CACHE_READY</obj_property>
       <obj_property name="label">DATA_CACHE_READY</obj_property>
    </wvobject>
-   <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/STALL_ENABLE_1" type="logic">
-      <obj_property name="ElementShortName">STALL_ENABLE_1</obj_property>
-      <obj_property name="ObjectShortName">STALL_ENABLE_1</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/STALL_ENABLE_2" type="logic">
-      <obj_property name="ElementShortName">STALL_ENABLE_2</obj_property>
-      <obj_property name="ObjectShortName">STALL_ENABLE_2</obj_property>
-   </wvobject>
    <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/BRANCH_TAKEN" type="logic">
       <obj_property name="ElementShortName">BRANCH_TAKEN</obj_property>
       <obj_property name="ObjectShortName">BRANCH_TAKEN</obj_property>
@@ -67,7 +52,6 @@
    <wvobject fp_name="group272" type="group">
       <obj_property name="label">Instruction Cache</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="group286" type="group">
          <obj_property name="label">Memory Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
@@ -6110,7 +6094,6 @@
       <wvobject fp_name="group919" type="group">
          <obj_property name="label">Memory Read Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/RD_ADDR_TO_L2_READY" type="logic">
             <obj_property name="ElementShortName">RD_ADDR_TO_L2_READY</obj_property>
             <obj_property name="ObjectShortName">RD_ADDR_TO_L2_READY</obj_property>
@@ -6685,6 +6668,7 @@
       <wvobject fp_name="group641" type="group">
          <obj_property name="label">Processor Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/CACHE_READY" type="logic">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">CACHE_READY</obj_property>
@@ -11090,6 +11074,20 @@
             <obj_property name="ObjectShortName">byte_address[1:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group2711" type="group">
+      <obj_property name="label">Extraction</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/EXT_FIFO_WR_ENB" type="logic">
+         <obj_property name="ElementShortName">EXT_FIFO_WR_ENB</obj_property>
+         <obj_property name="ObjectShortName">EXT_FIFO_WR_ENB</obj_property>
+      </wvobject>
+      <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/EXT_FIFO_WR_DATA" type="array">
+         <obj_property name="ElementShortName">EXT_FIFO_WR_DATA[31:0]</obj_property>
+         <obj_property name="ObjectShortName">EXT_FIFO_WR_DATA[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group3780" type="group">
