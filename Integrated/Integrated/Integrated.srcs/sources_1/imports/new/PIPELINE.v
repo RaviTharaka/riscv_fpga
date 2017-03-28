@@ -633,6 +633,9 @@ module PIPELINE #(
         WB_VALID_MEM3_WB <= WB_VALID_MEM2_MEM3;            
       end
       
+      
       end
+    else
+        WB_VALID_MEM3_WB <= 1'b0;
     end
 endmodule

@@ -11,17 +11,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="984388000fs"></ZoomStartTime>
-      <ZoomEndTime time="1242988001fs"></ZoomEndTime>
-      <Cursor1Time time="1027488000fs"></Cursor1Time>
+      <ZoomStartTime time="200600000fs"></ZoomStartTime>
+      <ZoomEndTime time="346600001fs"></ZoomEndTime>
+      <Cursor1Time time="217600000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="252"></NameColumnWidth>
-      <ValueColumnWidth column_width="870"></ValueColumnWidth>
+      <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="12" />
    <wave_markers>
-      <marker time="1027488000" label="" />
+      <marker time="1500067000" label="" />
+      <marker time="259600000" label="" />
    </wave_markers>
    <wvobject fp_name="/Test_RISCV_PROCESSOR/CLK" type="logic">
       <obj_property name="ElementShortName">CLK</obj_property>
@@ -55,6 +56,10 @@
    <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/STALL_ENABLE_2" type="logic">
       <obj_property name="ElementShortName">STALL_ENABLE_2</obj_property>
       <obj_property name="ObjectShortName">STALL_ENABLE_2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/BRANCH_TAKEN" type="logic">
+      <obj_property name="ElementShortName">BRANCH_TAKEN</obj_property>
+      <obj_property name="ObjectShortName">BRANCH_TAKEN</obj_property>
    </wvobject>
    <wvobject fp_name="group272" type="group">
       <obj_property name="label">Instruction Cache</obj_property>
@@ -669,7 +674,6 @@
       <wvobject fp_name="group2676" type="group">
          <obj_property name="label">Hit Path</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/ins_cache/set_select" type="array">
             <obj_property name="ElementShortName">set_select[0:0]</obj_property>
             <obj_property name="ObjectShortName">set_select[0:0]</obj_property>
@@ -5203,9 +5207,34 @@
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
       </wvobject>
+      <wvobject fp_name="group4841" type="group">
+         <obj_property name="label">ALU out buffers</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ALU_OUT_WIRE" type="array">
+            <obj_property name="ElementShortName">ALU_OUT_WIRE[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ALU_OUT_WIRE[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ALU_OUT_EX_MEM1" type="array">
+            <obj_property name="ElementShortName">ALU_OUT_EX_MEM1[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ALU_OUT_EX_MEM1[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ALU_OUT_MEM1_MEM2" type="array">
+            <obj_property name="ElementShortName">ALU_OUT_MEM1_MEM2[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ALU_OUT_MEM1_MEM2[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ALU_OUT_MEM2_MEM3" type="array">
+            <obj_property name="ElementShortName">ALU_OUT_MEM2_MEM3[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ALU_OUT_MEM2_MEM3[31:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ALU_OUT_MEM3_WB" type="array">
+            <obj_property name="ElementShortName">ALU_OUT_MEM3_WB[31:0]</obj_property>
+            <obj_property name="ObjectShortName">ALU_OUT_MEM3_WB[31:0]</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject fp_name="group798" type="group">
          <obj_property name="label">Register file</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/ID/REG_ARRAY/REGISTER[0]" type="array">
             <obj_property name="ElementShortName">[0][31:0]</obj_property>
             <obj_property name="ObjectShortName">[0][31:0]</obj_property>
@@ -5370,7 +5399,6 @@
       <wvobject fp_name="group4399" type="group">
          <obj_property name="label">FBC</obj_property>
          <obj_property name="DisplayName">label</obj_property>
-         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/pipeline/FBC/RD_SHIFTREG" type="array">
             <obj_property name="ElementShortName">RD_SHIFTREG[4:0][4:0]</obj_property>
             <obj_property name="ObjectShortName">RD_SHIFTREG[4:0][4:0]</obj_property>
@@ -6025,6 +6053,7 @@
       <wvobject fp_name="group919" type="group">
          <obj_property name="label">Memory Read Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/RD_ADDR_TO_L2_READY" type="logic">
             <obj_property name="ElementShortName">RD_ADDR_TO_L2_READY</obj_property>
             <obj_property name="ObjectShortName">RD_ADDR_TO_L2_READY</obj_property>
@@ -6599,6 +6628,7 @@
       <wvobject fp_name="group641" type="group">
          <obj_property name="label">Processor Interface</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/CACHE_READY" type="logic">
             <obj_property name="DisplayName">label</obj_property>
             <obj_property name="ElementShortName">CACHE_READY</obj_property>
@@ -6612,7 +6642,7 @@
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/ADDR_FROM_PROC" type="array">
             <obj_property name="ElementShortName">ADDR_FROM_PROC[31:0]</obj_property>
             <obj_property name="ObjectShortName">ADDR_FROM_PROC[31:0]</obj_property>
-            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/DATA_FROM_PROC" type="array">
             <obj_property name="ElementShortName">DATA_FROM_PROC[31:0]</obj_property>
@@ -6626,9 +6656,11 @@
       <wvobject fp_name="group3285" type="group">
          <obj_property name="label">L1 Reads</obj_property>
          <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
          <wvobject fp_name="group3284" type="group">
             <obj_property name="label">DataOut1</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="vbus3283" type="vbus">
                <obj_property name="label">7</obj_property>
                <obj_property name="DisplayName">label</obj_property>
@@ -8815,6 +8847,7 @@
          <wvobject fp_name="group1708" type="group">
             <obj_property name="label">DataIn0</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="isExpanded"></obj_property>
             <wvobject fp_name="vbus1675" type="vbus">
                <obj_property name="label">7</obj_property>
                <obj_property name="DisplayName">label</obj_property>
@@ -10973,11 +11006,41 @@
             </wvobject>
          </wvobject>
       </wvobject>
+      <wvobject fp_name="vbus4879" type="vbus">
+         <obj_property name="label">DM1_ADDR</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/tag" type="array">
+            <obj_property name="ElementShortName">tag[18:0]</obj_property>
+            <obj_property name="ObjectShortName">tag[18:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/tag_address" type="array">
+            <obj_property name="ElementShortName">tag_address[6:0]</obj_property>
+            <obj_property name="ObjectShortName">tag_address[6:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/section_address" type="array">
+            <obj_property name="ElementShortName">section_address[0:0]</obj_property>
+            <obj_property name="ObjectShortName">section_address[0:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/word_address" type="array">
+            <obj_property name="ElementShortName">word_address[2:0]</obj_property>
+            <obj_property name="ObjectShortName">word_address[2:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/Test_RISCV_PROCESSOR/uut/data_cache/byte_address" type="array">
+            <obj_property name="ElementShortName">byte_address[1:0]</obj_property>
+            <obj_property name="ObjectShortName">byte_address[1:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="group3780" type="group">
       <obj_property name="label">Simulation</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject fp_name="/Test_RISCV_PROCESSOR/output_addr_reg_ins" type="array">
          <obj_property name="ElementShortName">output_addr_reg_ins[31:0]</obj_property>
          <obj_property name="ObjectShortName">output_addr_reg_ins[31:0]</obj_property>
@@ -10997,30 +11060,6 @@
          <obj_property name="CustomSignalColor">#008080</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_ins[3]" type="array">
-            <obj_property name="ElementShortName">[3][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[3][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_ins[2]" type="array">
-            <obj_property name="ElementShortName">[2][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[2][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_ins[1]" type="array">
-            <obj_property name="ElementShortName">[1][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[1][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_ins[0]" type="array">
-            <obj_property name="ElementShortName">[0][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[0][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
       </wvobject>
       <wvobject fp_name="/Test_RISCV_PROCESSOR/rd_output_addr_reg_dat" type="array">
          <obj_property name="ElementShortName">rd_output_addr_reg_dat[31:0]</obj_property>
@@ -11032,30 +11071,6 @@
          <obj_property name="CustomSignalColor">#008080</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_dat[3]" type="array">
-            <obj_property name="ElementShortName">[3][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[3][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_dat[2]" type="array">
-            <obj_property name="ElementShortName">[2][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[2][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_dat[1]" type="array">
-            <obj_property name="ElementShortName">[1][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[1][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
-         <wvobject fp_name="/Test_RISCV_PROCESSOR/read_value_dat[0]" type="array">
-            <obj_property name="ElementShortName">[0][3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">[0][3:0][31:0]</obj_property>
-            <obj_property name="CustomSignalColor">#008080</obj_property>
-            <obj_property name="UseCustomSignalColor">true</obj_property>
-         </wvobject>
       </wvobject>
    </wvobject>
 </wave_config>
