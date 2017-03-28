@@ -24,6 +24,7 @@ module RISCV_PROCESSOR#(
         // Fixed parameters
         localparam ADDR_WIDTH           = 32,
         localparam DATA_WIDTH           = 32,
+        localparam EXT_FIFO_ADDRESS     = 32'h00010150,
            
         // Primary parameters
         parameter S                     = 17,                    // Size of the cache will be 2^S bits
@@ -37,31 +38,31 @@ module RISCV_PROCESSOR#(
         parameter V                     = 2,                     // Size of the victim cache will be 2^V cache lines
         parameter L2_DELAY_RD           = 7,                     // Delay of the second level of cache
                     
-//        // Calculated parameters
-//        localparam BYTES_PER_WORD       = logb2(DATA_WIDTH/8),
+        // Calculated parameters
+        localparam BYTES_PER_WORD       = logb2(DATA_WIDTH/8),
         
-//        localparam CACHE_SIZE           = 1 << S,
-//        localparam BLOCK_SIZE           = 1 << B,
-//        localparam ASSOCIATIVITY        = 1 << a,
+        localparam CACHE_SIZE           = 1 << S,
+        localparam BLOCK_SIZE           = 1 << B,
+        localparam ASSOCIATIVITY        = 1 << a,
         
-//        localparam TAG_WIDTH            = ADDR_WIDTH + 3 + a - S,
-//        localparam LINE_ADDR_WIDTH      = S - a - B + T,
-//        localparam TAG_ADDR_WIDTH       = S - a - B,
+        localparam TAG_WIDTH            = ADDR_WIDTH + 3 + a - S,
+        localparam LINE_ADDR_WIDTH      = S - a - B + T,
+        localparam TAG_ADDR_WIDTH       = S - a - B,
         
-        localparam L2_BUS_WIDTH         = 1 << W
-//        localparam BLOCK_SECTIONS       = 1 << T,
+        localparam L2_BUS_WIDTH         = 1 << W,
+        localparam BLOCK_SECTIONS       = 1 << T,
         
-//        localparam SET_SIZE             = CACHE_SIZE / ASSOCIATIVITY,
-//        localparam LINE_RAM_WIDTH       = 1 << (B - T),
-//        localparam LINE_RAM_DEPTH       = 1 << LINE_ADDR_WIDTH,
-//        localparam TAG_RAM_WIDTH        = TAG_WIDTH + BLOCK_SECTIONS,
-//        localparam TAG_RAM_DEPTH        = 1 << TAG_ADDR_WIDTH,
+        localparam SET_SIZE             = CACHE_SIZE / ASSOCIATIVITY,
+        localparam LINE_RAM_WIDTH       = 1 << (B - T),
+        localparam LINE_RAM_DEPTH       = 1 << LINE_ADDR_WIDTH,
+        localparam TAG_RAM_WIDTH        = TAG_WIDTH + BLOCK_SECTIONS,
+        localparam TAG_RAM_DEPTH        = 1 << TAG_ADDR_WIDTH,
         
-//        localparam PREFETCH_QUEUE_DEPTH = 1 << p,
-//        localparam STREAM_BUF_DEPTH     = 1 << n,
-//        localparam STREAM_SEL_BITS      = logb2(N + 1),
+        localparam PREFETCH_QUEUE_DEPTH = 1 << p,
+        localparam STREAM_BUF_DEPTH     = 1 << n,
+        localparam STREAM_SEL_BITS      = logb2(N + 1),
         
-//        localparam L2_BURST             = 1 << (B - W)
+        localparam L2_BURST             = 1 << (B - W)
     ) (
         // Standard inputs
         input                               CLK,
@@ -102,35 +103,41 @@ module RISCV_PROCESSOR#(
         // Read data to Data Cache from Memory
         input                               DATA_FROM_L2_VALID_DAT,
         output                              DATA_FROM_L2_READY_DAT,
-        input      [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_DAT       
-          
+        input      [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_DAT,
+        
+        ////////////////////////
+        //   EXTRACTION FIFO  //
+        ////////////////////////
+                   
+        output reg                          EXT_FIFO_WR_ENB,
+        output reg [DATA_WIDTH     - 1 : 0] EXT_FIFO_WR_DATA
     );
     
      // Status signals between processor and instruction cache
-     wire                               PROC_READY_INS;
-     wire                               CACHE_READY_INS;
-     wire                               BRANCH_TAKEN_INS;
+     wire                               proc_ready_ins;
+     wire                               cache_ready_ins;
      
      // Input address bus from the processor to instruction cache
-     wire                               BRANCH;
-     wire   [ADDR_WIDTH - 1 : 0]        BRANCH_ADDRESS_INS;
+     wire                               branch_taken;
+     wire   [ADDR_WIDTH - 1 : 0]        branch_address;
            
      // Output data bus from instruction cache to the processor
-     wire   [DATA_WIDTH - 1 : 0]        DATA_TO_PROC_INS;
-     wire   [ADDR_WIDTH - 1 : 0]        PC_TO_PROC_INS;
+     wire   [DATA_WIDTH - 1 : 0]        data_to_proc_ins;
+     wire   [ADDR_WIDTH - 1 : 0]        pc_to_proc_ins;
      
      
      //Status signals between processor and data cache
-     wire   [     2     - 1 : 0]        CONTROL_FROM_PROC_DATA;
-     wire                               PROC_READY_DATA;
-     wire                               CACHE_READY_DATA;
+     wire                               proc_ready_dat;
+     wire                               cache_ready_dat;
         
-     //Input address bus from the processor to instruction cache     
-     wire   [ADDR_WIDTH - 1 : 0]        ADDR_FROM_PROC_DATA;
-     
-     //Output data from instruction cache to processor
-     wire   [DATA_WIDTH - 1 : 0]        DATA_FROM_PROC_DATA;
-     wire   [DATA_WIDTH - 1 : 0]        DATA_TO_PROC_DATA;
+     //Input address bus from the processor to data cache     
+     wire   [2          - 1 : 0]        control_from_proc_dat;
+     wire   [ADDR_WIDTH - 1 : 0]        addr_from_proc_dat;
+     wire   [DATA_WIDTH - 1 : 0]        data_from_proc_dat;
+               
+     //Output data from data cache to processor
+     wire   [DATA_WIDTH - 1 : 0]        data_to_proc_dat;
+          
      
      Ins_Cache # (
          .S(S),
@@ -138,22 +145,26 @@ module RISCV_PROCESSOR#(
          .a(a),
          .T(T),
          .W(W),
-         .L2_DELAY(L2_DELAY_RD)
+         .L2_DELAY(L2_DELAY_RD),
+         .N(N),
+         .n(n),
+         .p(p)
      ) ins_cache (
+         // Standard inputs
          .CLK(CLK),
          .RSTN(RSTN),
-        
-         .BRANCH_ADDR_IN(BRANCH_ADDRESS_INS),
-         .BRANCH(BRANCH_TAKEN_INS),
-         .DATA_TO_PROC(DATA_TO_PROC_INS),
-         .PC_TO_PROC(PC_TO_PROC_INS),
-         .CACHE_READY(CACHE_READY_INS),
-         .PROC_READY(PROC_READY_INS),
-                
+         // Status signals between processor and cache
+         .CACHE_READY(cache_ready_ins),
+         .PROC_READY(proc_ready_ins),
+         // Ports towards the processor
+         .BRANCH_ADDR_IN(branch_address),
+         .BRANCH(branch_taken),
+         .DATA_TO_PROC(data_to_proc_ins),
+         .PC_TO_PROC(pc_to_proc_ins),
+         /// Read port towards the L2 cache    
          .ADDR_TO_L2(ADDR_TO_L2_INS),
          .ADDR_TO_L2_READY(ADDR_TO_L2_READY_INS),
          .ADDR_TO_L2_VALID(ADDR_TO_L2_VALID_INS),
-        
          .DATA_FROM_L2(DATA_FROM_L2_INS),
          .DATA_FROM_L2_VALID(DATA_FROM_L2_VALID_INS),
          .DATA_FROM_L2_READY(DATA_FROM_L2_READY_INS)
@@ -161,30 +172,23 @@ module RISCV_PROCESSOR#(
     
     PIPELINE pipeline(
          .CLK(CLK),
-         
-    //Instruction cache buses
-         .CACHE_READY(CACHE_READY_INS),
-         .PC_IF_ID(PC_TO_PROC_INS), //IF out to ID in
-         .INS_IF_ID(DATA_TO_PROC_INS),
-         .BRANCH_TAKEN(BRANCH_TAKEN_INS),
-         .BRANCH_ADDRESS(BRANCH_ADDRESS_INS),
-//         .ALU(ALU_OUT),
-//         .COMPAR(COMPARE),
-         .PIPELINE_STALL(PROC_READY_INS),
-         
-    //Data cache busses
-    
-         .CONTROL_DATA_CACHE(CONTROL_FROM_PROC_DATA), 
-         .ADDR_TO_DATA_CACHE(ADDR_FROM_PROC_DATA),
-         .DATA_TO_DATA_CACHE(DATA_FROM_PROC_DATA),
-         .DATA_TO_PROC(DATA_TO_PROC_DATA),
-              
-         .PROC_READY(PROC_READY_DATA),
-         .CACHE_READY_DATA(CACHE_READY_DATA)
-         
+         // Towards instruction cache
+         .CACHE_READY(cache_ready_ins),
+         .PIPELINE_STALL(proc_ready_ins),
+         .BRANCH_TAKEN(branch_taken),
+         .BRANCH_ADDRESS(branch_address),
+         .PC_IF_ID(pc_to_proc_ins), 
+         .INS_IF_ID(data_to_proc_ins),
+         //Data cache busses
+         .CONTROL_DATA_CACHE(control_from_proc_dat), 
+         .ADDR_TO_DATA_CACHE(addr_from_proc_dat),
+         .DATA_TO_DATA_CACHE(data_from_proc_dat),
+         .DATA_TO_PROC(data_to_proc_dat),
+         .PROC_READY(proc_ready_dat),
+         .CACHE_READY_DATA(cache_ready_dat)
     );
     
-    Data_Cache #(
+    Data_Cache # (
         .S(S),
         .B(B),
         .a(a),
@@ -193,29 +197,50 @@ module RISCV_PROCESSOR#(
         .L2_DELAY_RD(L2_DELAY_RD),
         .V(V)
     ) data_cache (
+        // Standard inputs
         .CLK(CLK),
-        .CONTROL_FROM_PROC(CONTROL_FROM_PROC_DATA),              // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
-        .ADDR_FROM_PROC(ADDR_FROM_PROC_DATA),
-        .DATA_FROM_PROC(DATA_FROM_PROC_DATA),
-        .DATA_TO_PROC(DATA_TO_PROC_DATA),
-        
-        .PROC_READY(PROC_READY_DATA),
-        .CACHE_READY(CACHE_READY_DATA),
-        
-        // Ports towards the L2 cache
+        // Status signals between processor and cache
+        .PROC_READY(proc_ready_dat),
+        .CACHE_READY(cache_ready_dat),
+        // Ports towards the processor
+        .CONTROL_FROM_PROC(control_from_proc_dat),  // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}
+        .ADDR_FROM_PROC(addr_from_proc_dat),
+        .DATA_FROM_PROC(data_from_proc_dat),
+        .DATA_TO_PROC(data_to_proc_dat),
+        // Write port towards the L2 cache
         .WR_TO_L2_READY(WR_TO_L2_READY_DAT),
         .WR_TO_L2_VALID(WR_TO_L2_VALID_DAT),
         .WR_ADDR_TO_L2(WR_ADDR_TO_L2_DAT),
         .DATA_TO_L2(DATA_TO_L2_DAT),
         .WR_CONTROL_TO_L2(WR_CONTROL_TO_L2_DAT),
         .WR_COMPLETE(WR_COMPLETE_DAT),
-        
+        // Read port towards the L2 cache
         .RD_ADDR_TO_L2_READY(RD_ADDR_TO_L2_READY_DAT),
         .RD_ADDR_TO_L2_VALID(RD_ADDR_TO_L2_VALID_DAT),
         .RD_ADDR_TO_L2(RD_ADDR_TO_L2_DAT),
-        
         .DATA_FROM_L2_VALID(DATA_FROM_L2_VALID_DAT),
         .DATA_FROM_L2_READY(DATA_FROM_L2_READY_DAT),
         .DATA_FROM_L2(DATA_FROM_L2_DAT)       
     );
+    
+    // Intercepting and extracting certain data writes
+    reg [DATA_WIDTH - 1 : 0] data;
+    reg [2          - 1 : 0] control;
+    reg [ADDR_WIDTH - 1 : 0] address;
+    
+    always @ (posedge CLK) begin
+        control <= control_from_proc_dat;       
+        address <= addr_from_proc_dat;          
+        data    <= data_from_proc_dat;   
+        
+        EXT_FIFO_WR_ENB  <= (address == EXT_FIFO_ADDRESS) & (control == 2);
+        EXT_FIFO_WR_DATA <= data;      
+    end
+    
+    function integer logb2;
+        input integer depth;
+        for (logb2 = 0; depth > 1; logb2 = logb2 + 1)
+            depth = depth >> 1;
+    endfunction
+    
 endmodule
