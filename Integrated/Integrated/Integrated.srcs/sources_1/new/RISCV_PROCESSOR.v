@@ -73,14 +73,14 @@ module RISCV_PROCESSOR#(
         ////////////////////////
         
         // Output address bus from Instruction Cache to Memory
-        input                               ADDR_TO_L2_READY_INS,
-        output                              ADDR_TO_L2_VALID_INS,      
-        output     [ADDR_WIDTH - 2 - 1 : 0] ADDR_TO_L2_INS,
+        (* mark_debug *) input                               ADDR_TO_L2_READY_INS,
+        (* mark_debug *) output                              ADDR_TO_L2_VALID_INS,      
+        (* mark_debug *) output     [ADDR_WIDTH - 2 - 1 : 0] ADDR_TO_L2_INS,
                 
         // Input data bus to Insruction Cache from Memory       
-        input                               DATA_FROM_L2_VALID_INS,
-        output                              DATA_FROM_L2_READY_INS,
-        input      [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_INS,
+        (* mark_debug *) input                               DATA_FROM_L2_VALID_INS,
+        (* mark_debug *) output                              DATA_FROM_L2_READY_INS,
+        (* mark_debug *) input      [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_INS,
         
         
         ////////////////////////
@@ -88,22 +88,22 @@ module RISCV_PROCESSOR#(
         ////////////////////////
         
         // Write bus between Data Cache and Memory 
-        input                               WR_TO_L2_READY_DAT,
-        output                              WR_TO_L2_VALID_DAT,
-        output     [ADDR_WIDTH - 2 - 1 : 0] WR_ADDR_TO_L2_DAT,
-        output     [L2_BUS_WIDTH   - 1 : 0] DATA_TO_L2_DAT,
-        output                              WR_CONTROL_TO_L2_DAT,
-        input                               WR_COMPLETE_DAT,
+        (* mark_debug *) input                               WR_TO_L2_READY_DAT,
+        (* mark_debug *) output                              WR_TO_L2_VALID_DAT,
+        (* mark_debug *) output     [ADDR_WIDTH - 2 - 1 : 0] WR_ADDR_TO_L2_DAT,
+        (* mark_debug *) output     [L2_BUS_WIDTH   - 1 : 0] DATA_TO_L2_DAT,
+        (* mark_debug *) output                              WR_CONTROL_TO_L2_DAT,
+        (* mark_debug *) input                               WR_COMPLETE_DAT,
         
         // Read address from Data Cache to Memory
-        input                               RD_ADDR_TO_L2_READY_DAT,
-        output                              RD_ADDR_TO_L2_VALID_DAT,
-        output     [ADDR_WIDTH - 2 - 1 : 0] RD_ADDR_TO_L2_DAT,
+        (* mark_debug *) input                               RD_ADDR_TO_L2_READY_DAT,
+        (* mark_debug *) output                              RD_ADDR_TO_L2_VALID_DAT,
+        (* mark_debug *) output     [ADDR_WIDTH - 2 - 1 : 0] RD_ADDR_TO_L2_DAT,
         
         // Read data to Data Cache from Memory
-        input                               DATA_FROM_L2_VALID_DAT,
-        output                              DATA_FROM_L2_READY_DAT,
-        input      [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_DAT,
+        (* mark_debug *) input                               DATA_FROM_L2_VALID_DAT,
+        (* mark_debug *) output                              DATA_FROM_L2_READY_DAT,
+        (* mark_debug *) input      [L2_BUS_WIDTH   - 1 : 0] DATA_FROM_L2_DAT,
         
         ////////////////////////
         //   EXTRACTION FIFO  //
