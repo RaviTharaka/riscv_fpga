@@ -57,7 +57,6 @@ module Refill_Control_I #(
         // Current request at IF2
         input [TAG_WIDTH       - 1 : 0] REFILL_REQ_TAG_PREV,            // Tag portion of the PC at IF2
         input [TAG_ADDR_WIDTH  - 1 : 0] REFILL_REQ_LINE_PREV,           // Line portion of the PC at IF2
-        input [T               - 1 : 0] REFILL_REQ_SECT_PREV,           // Section portion of the PC at IF2
         
         // Signals coming from outside the cache
         input                           BRANCH,                         // Branch command from EXE stage
@@ -132,11 +131,11 @@ module Refill_Control_I #(
     reg [T              - 1 : 0] cur_sect_wire, fir_sect_wire, sec_sect_wire, thr_sect_wire;
     
     // Set = destination set of the request, Source = which stream buffer (or L2) the request is coming from
-    reg [N              - 1 : 0] cur_src,  fir_src,  sec_src,  thr_src;
-    reg [ASSOCIATIVITY  - 1 : 0] cur_set,  fir_set,  sec_set,  thr_set;
+    reg [STREAM_SEL_BITS - 1 : 0] cur_src,  fir_src,  sec_src,  thr_src;
+    reg [ASSOCIATIVITY   - 1 : 0] cur_set,  fir_set,  sec_set,  thr_set;
     
-    reg [N              - 1 : 0] cur_src_wire,  fir_src_wire,  sec_src_wire,  thr_src_wire;
-    reg [ASSOCIATIVITY  - 1 : 0] cur_set_wire,  fir_set_wire,  sec_set_wire,  thr_set_wire;
+    reg [STREAM_SEL_BITS - 1 : 0] cur_src_wire,  fir_src_wire,  sec_src_wire,  thr_src_wire;
+    reg [ASSOCIATIVITY   - 1 : 0] cur_set_wire,  fir_set_wire,  sec_set_wire,  thr_set_wire;
     
     // To get admitted to the refill queue, several tests must be passed, and also it mustn't readmit a completed refill
     // (L2 misses, PC pipe disables, IF pipe saturated with PC value, L2 completes and removes from queue, but still IF pipe

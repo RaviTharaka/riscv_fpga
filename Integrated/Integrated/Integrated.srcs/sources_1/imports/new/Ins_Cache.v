@@ -493,6 +493,9 @@ module Ins_Cache #(
     wire [STREAM_SEL_BITS - 1 : 0] hit_buf_no;
     wire                           stream_hit;
     
+    wire [TAG_WIDTH + TAG_ADDR_WIDTH - 1 : 0] allocate_addr;
+    assign allocate_addr = {tag_del_2, tag_address_del_2} + 1;
+    
     Stream_Buffer_Control #(
         .N(N),
         .ADDR_WIDTH(TAG_WIDTH + TAG_ADDR_WIDTH),
@@ -511,7 +514,6 @@ module Ins_Cache #(
         .STREAM_BUF_WR_ENB(stream_buf_wr_enb),              
         .STREAM_BUF_RD_ENB(stream_buf_rd_enb),
         .STREAM_BUF_FULL(stream_buf_full),
-        .STREAM_BUF_EMPTY(stream_buf_empty),
         .ONGOING_QUEUE_RD_ENB(data_stored_stream_buf),
         // Entering requests into prefetch queue
         .PREFETCH_QUEUE_WR_ENB(prefetch_queue_wr_enb),
@@ -523,8 +525,8 @@ module Ins_Cache #(
         .HIT(stream_hit),
         .HIT_BUF_NO(hit_buf_no),
         .SECTION_COMMIT(section_commit),
-        .ALLOCATE(send_addr_to_L2),                                               // Temporary
-        .ALLOCATE_ADDR({tag_del_2, tag_address_del_2} + 1)                        // Temporary
+        .ALLOCATE(send_addr_to_L2),                                               
+        .ALLOCATE_ADDR(allocate_addr)                                             
     );
                                                        
     // Line RAM data in multiplexer
@@ -563,7 +565,6 @@ module Ins_Cache #(
         .REFILL_REQ_SECT(section_address_del_2),
         .REFILL_REQ_TAG_PREV(tag_del_1),
         .REFILL_REQ_LINE_PREV(tag_address_del_1),
-        .REFILL_REQ_SECT_PREV(section_address_del_1),
         // Related to PC select and PC pipeline enable
         .BRANCH(BRANCH),
         .PC_PIPE_ENB(pc_pipe_enb),                         // Enable for main pipeline registers
@@ -587,33 +588,16 @@ module Ins_Cache #(
         .LIN_MEM_DATA_IN_SEL(lin_mem_data_in_sel)           // 0 for L2 requests, buffer number for others
                
     );
-    
-    Ins_Cache_Control #(
-        .S(S),
-        .B(B),
-        .a(a),
-        .T(T),
-        .N(N),
-        .W(W),
-        .L2_DELAY(L2_DELAY)
-    ) control (
-        .CLK(CLK),
-        .RSTN(RSTN),
-        // Status signals
-        .CACHE_HIT(cache_hit),
-        .PROC_READY(PROC_READY),                            // Signal from processor to cache that its pipeline is currently ready to work
-        // Register enables
-        .CACHE_PIPE_ENB(cache_pipe_enb),                    // Enable for cache's pipeline registers
-        // Memories
-        .TAG_MEM_RD_ENB(tag_mem_rd_enb),                    // Common read enable for the tag memories
-        .LIN_MEM_RD_ENB(lin_mem_rd_enb)
-    );
+        
+    assign cache_pipe_enb = 1;
+    assign tag_mem_rd_enb = 1;
+    assign lin_mem_rd_enb = 1;
     
     initial begin
         // Processor always starts with the zeroth instruction
-        pc                    = 32'h00000008;   
-        pc_del_1              = 32'h00000004;
-        pc_del_2              = 32'h00000000;
+        pc                    = 32'h00010008;   
+        pc_del_1              = 32'h00010004;
+        pc_del_2              = 32'h00010000;
                 
         word_address_del_1    = pc_del_1[BYTES_PER_WORD                +: (B - T - 5)      ];
         tag_address_del_1     = pc_del_1[(BYTES_PER_WORD + B - 5)      +: (S - a - B)      ];

@@ -1107,6 +1107,7 @@ module Refill_Control_D #(
                              2'b11 : ADDR_FROM_PROC_SEL = 1; 
                          endcase                    
                      end
+            default : ADDR_FROM_PROC_SEL = 0;
         endcase
                                       
         case (pc_state)
@@ -1170,6 +1171,7 @@ module Refill_Control_D #(
                               2'b11 : CACHE_READY = 1;
                           endcase                    
                       end
+            default : CACHE_READY = 0;
         endcase
     end
     

@@ -127,7 +127,6 @@ module RISCV_PROCESSOR#(
      
      
      //Status signals between processor and data cache
-     wire                               proc_ready_dat;
      wire                               cache_ready_dat;
         
      //Input address bus from the processor to data cache     
@@ -184,7 +183,6 @@ module RISCV_PROCESSOR#(
          .ADDR_TO_DATA_CACHE(addr_from_proc_dat),
          .DATA_TO_DATA_CACHE(data_from_proc_dat),
          .DATA_TO_PROC(data_to_proc_dat),
-         .PROC_READY(proc_ready_dat),
          .CACHE_READY_DATA(cache_ready_dat)
     );
     
@@ -200,7 +198,6 @@ module RISCV_PROCESSOR#(
         // Standard inputs
         .CLK(CLK),
         // Status signals between processor and cache
-        .PROC_READY(proc_ready_dat),
         .CACHE_READY(cache_ready_dat),
         // Ports towards the processor
         .CONTROL_FROM_PROC(control_from_proc_dat),  // CONTROL_FROM_PROC = {00(idle), 01(read), 10(write), 11(flush address from cache)}

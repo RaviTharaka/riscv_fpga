@@ -30,7 +30,7 @@ module Replacement_Unit #(
         localparam TAG_ADDR_WIDTH   = S - a - B                        
     ) (
         input                           CLK,
-        input  [TAG_ADDR_WIDTH - 1 : 0] BLOCK,
+        //input  [TAG_ADDR_WIDTH - 1 : 0] BLOCK,
         output [a              - 1 : 0] REPLACE
     );
     
@@ -39,7 +39,7 @@ module Replacement_Unit #(
     reg [a - 1 : 0] replace;
     
     always @(posedge CLK) begin
-        replace <= replace + 1;
+        replace <= replace;         // Temporary
     end
     
     initial begin

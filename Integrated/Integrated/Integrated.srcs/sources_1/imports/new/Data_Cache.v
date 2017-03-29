@@ -67,7 +67,6 @@ module Data_Cache #(
         input      [DATA_WIDTH     - 1 : 0] DATA_FROM_PROC,
         output reg [DATA_WIDTH     - 1 : 0] DATA_TO_PROC,
         
-        input                               PROC_READY,
         output                              CACHE_READY,
         
         // Ports towards the L2 cache
@@ -448,7 +447,8 @@ module Data_Cache #(
         .B(B),
         .a(a)
     ) replacement_unit (
-        .BLOCK(tag_address_del_1),
+        .CLK(CLK),
+        //.BLOCK(tag_address_del_1),
         .REPLACE(replace)
     );
         

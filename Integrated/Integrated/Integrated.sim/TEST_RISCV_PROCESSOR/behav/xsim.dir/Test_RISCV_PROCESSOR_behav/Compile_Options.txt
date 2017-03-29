@@ -1,1 +1,1 @@
--wto "b06e559e1f6b4d22acf94db7b14b3e17" --debug "typical" --relax --mt "2" -L "xil_defaultlib" -L "unisims_ver" -L "unimacro_ver" -L "secureip" -L "xpm" --snapshot "Test_RISCV_PROCESSOR_behav" "xil_defaultlib.Test_RISCV_PROCESSOR" "xil_defaultlib.glbl" -log "elaborate.log" 
+-wto "b06e559e1f6b4d22acf94db7b14b3e17" --debug "typical" --relax --mt "2" -L "xil_defaultlib" -L "unisims_ver" -L "unimacro_ver" -L "secureip" --snapshot "Test_RISCV_PROCESSOR_behav" "xil_defaultlib.Test_RISCV_PROCESSOR" "xil_defaultlib.glbl" -log "elaborate.log" 

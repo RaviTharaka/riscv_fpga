@@ -40,7 +40,7 @@ module MUX_2to1_32bit(
     assign OP = OP_REG;
 endmodule
 
-module MUX_4to1_32bit(
+/*module MUX_4to1_32bit(
     input [31:0] IN1,
     input [31:0] IN2,
     input [31:0] IN3,
@@ -62,4 +62,4 @@ module MUX_4to1_32bit(
     end
     
     assign OP = OP_REG;
-endmodule
+endmodule*/

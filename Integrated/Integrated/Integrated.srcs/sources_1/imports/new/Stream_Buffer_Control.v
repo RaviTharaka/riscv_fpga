@@ -45,7 +45,6 @@ module Stream_Buffer_Control #(
         output     [N                - 1 : 0] STREAM_BUF_RESET,           // Resets each stream buffer (one per each buffer)
         output     [N                - 1 : 0] STREAM_BUF_WR_ENB,          // Write enable for the stream buffer (one per each buffer)
         output     [N                - 1 : 0] STREAM_BUF_RD_ENB,          // Read enable for the stream buffer (one per each buffer)
-        input      [N                - 1 : 0] STREAM_BUF_EMPTY,           // Empty signal from the stream buffer (one per each buffer)
         input      [N                - 1 : 0] STREAM_BUF_FULL,            // Full signal from the stream buffer (one per each buffer)
         
         // Ongoing queue management

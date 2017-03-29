@@ -62,7 +62,6 @@ module PIPELINE #(
     output     reg     [DATA_WIDTH - 1 : 0]        DATA_TO_DATA_CACHE,
     input              [DATA_WIDTH - 1 : 0]        DATA_TO_PROC,
           
-    output     reg                                 PROC_READY,
     input                                          CACHE_READY_DATA,
            
     
@@ -227,7 +226,6 @@ module PIPELINE #(
         BRANCH_TAKEN_REG        =   1'b0;
         COUNTER1                =   4'd0;
         COUNTER2                =   4'd0;
-        PROC_READY              =   1'b1;
         CONTROL_DATA_CACHE      =   2'b00;
         ADDR_TO_DATA_CACHE      =   32'd0;
         DATA_TO_DATA_CACHE      =   32'd0;

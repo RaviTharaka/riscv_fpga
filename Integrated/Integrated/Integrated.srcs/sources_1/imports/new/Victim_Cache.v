@@ -31,7 +31,7 @@ module Victim_Cache #(
         parameter B                     = 9,                     // Size of a block will be 2^B bits
         parameter a                     = 1,                     // Associativity of the cache would be 2^a
         parameter T                     = 1,                     // Width to depth translation amount
-        parameter V                     = 3,                     // Size of the victim cache will be 2^V cache lines
+        parameter V                     = 2,                     // Size of the victim cache will be 2^V cache lines
         parameter W                     = 7,                     // Width of the L2-L1 bus would be 2^W
                 
         // Calculated parameters
@@ -119,10 +119,85 @@ module Victim_Cache #(
         
     // Convert the one-hot type encoding of equality to binary
     reg [V - 1 : 0] hit_address;
-    reg [V - 1 : 0] temp;
+    //reg [V - 1 : 0] temp;
     
     integer j;
     always @(*) begin
+        case (victim_wr_pos)
+            2'b00 : case (equality)
+                        4'b0000 : hit_address = 0;
+                        4'b0001 : hit_address = 0;
+                        4'b0010 : hit_address = 1;
+                        4'b0011 : hit_address = 0;
+                        4'b0100 : hit_address = 2;
+                        4'b0101 : hit_address = 0;
+                        4'b0110 : hit_address = 2;
+                        4'b0111 : hit_address = 0;
+                        4'b1000 : hit_address = 3;
+                        4'b1001 : hit_address = 0;
+                        4'b1010 : hit_address = 3;
+                        4'b1011 : hit_address = 0;
+                        4'b1100 : hit_address = 3;
+                        4'b1101 : hit_address = 0;
+                        4'b1110 : hit_address = 3;
+                        4'b1111 : hit_address = 0;
+                    endcase      
+            2'b01 : case (equality)
+                        4'b0000 : hit_address = 0;
+                        4'b0001 : hit_address = 0;
+                        4'b0010 : hit_address = 1;
+                        4'b0011 : hit_address = 1;
+                        4'b0100 : hit_address = 2;
+                        4'b0101 : hit_address = 0;
+                        4'b0110 : hit_address = 1;
+                        4'b0111 : hit_address = 1;
+                        4'b1000 : hit_address = 3;
+                        4'b1001 : hit_address = 0;
+                        4'b1010 : hit_address = 1;
+                        4'b1011 : hit_address = 1;
+                        4'b1100 : hit_address = 3;
+                        4'b1101 : hit_address = 0;
+                        4'b1110 : hit_address = 1;
+                        4'b1111 : hit_address = 1;
+                    endcase      
+            2'b10 : case (equality)
+                        4'b0000 : hit_address = 0;
+                        4'b0001 : hit_address = 0;
+                        4'b0010 : hit_address = 1;
+                        4'b0011 : hit_address = 1;
+                        4'b0100 : hit_address = 2;
+                        4'b0101 : hit_address = 2;
+                        4'b0110 : hit_address = 2;
+                        4'b0111 : hit_address = 2;
+                        4'b1000 : hit_address = 3;
+                        4'b1001 : hit_address = 0;
+                        4'b1010 : hit_address = 1;
+                        4'b1011 : hit_address = 1;
+                        4'b1100 : hit_address = 2;
+                        4'b1101 : hit_address = 2;
+                        4'b1110 : hit_address = 2;
+                        4'b1111 : hit_address = 2;
+                    endcase      
+            2'b11 : case (equality)
+                        4'b0000 : hit_address = 0;
+                        4'b0001 : hit_address = 0;
+                        4'b0010 : hit_address = 1;
+                        4'b0011 : hit_address = 1;
+                        4'b0100 : hit_address = 2;
+                        4'b0101 : hit_address = 2;
+                        4'b0110 : hit_address = 2;
+                        4'b0111 : hit_address = 2;
+                        4'b1000 : hit_address = 3;
+                        4'b1001 : hit_address = 3;
+                        4'b1010 : hit_address = 3;
+                        4'b1011 : hit_address = 3;
+                        4'b1100 : hit_address = 3;
+                        4'b1101 : hit_address = 3;
+                        4'b1110 : hit_address = 3;
+                        4'b1111 : hit_address = 3;
+                    endcase              
+        endcase
+        /*        
         if (|equality)
             for (j = 0; j < VICTIM_CACHE_DEPTH; j = j + 1) begin
                 temp = victim_wr_pos + j + 1;
@@ -134,7 +209,7 @@ module Victim_Cache #(
             end
         else begin
             hit_address = 0;
-        end
+        end*/
     end
     
     // Victim hit if any of the entries are equal to the SEARCH_ADDR
