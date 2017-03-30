@@ -1,0 +1,15 @@
+
+text.o:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <main>:
+   0:	02010113          	addi	sp,sp,32
+   4:	00812e23          	sw	s0,28(sp)
+   8:	02010413          	addi	s0,sp,32
+   c:	000107b7          	lui	a5,0x10
+  10:	15078793          	addi	a5,a5,336 # 10150 <.L2+0x10134>
+  14:	0007a783          	lw	a5,0(a5)
+  18:	fef42623          	sw	a5,-20(s0)
+  1c:	0000006f          	j	1c <.L2>
