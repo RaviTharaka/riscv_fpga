@@ -5,7 +5,7 @@ add.o:     file format elf32-littleriscv
 Disassembly of section .text:
 
 00000000 <main>:
-   0:	02010113          	addi	sp,sp,32
+   0:	fe010113          	addi	sp,sp,-32
    4:	00812e23          	sw	s0,28(sp)
    8:	02010413          	addi	s0,sp,32
    c:	00100793          	li	a5,1
@@ -18,4 +18,6 @@ Disassembly of section .text:
   28:	fe842703          	lw	a4,-24(s0)
   2c:	00e68733          	add	a4,a3,a4
   30:	00e7a023          	sw	a4,0(a5)
+
+00000034 <.L2>:
   34:	0000006f          	j	34 <.L2>
