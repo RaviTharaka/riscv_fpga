@@ -4,7 +4,7 @@ int main(){
 
 	//int *p = (int *) u;
 	int temp;
-	int address = 0x10350;
+	int address = 0x10370;
 	int i,min=20000,max=0,median=0,sum=0, average=0;
 	int his0 = 0, his1 = 0, his2 = 0, his3 = 0, his4 = 0;
 	int his5 = 0, his6 = 0, his7 = 0, his8 = 0, his9 = 0;
@@ -63,21 +63,21 @@ int main(){
 	average = sum/1000;
 	
 
-	*(int*)0x10150 = min;
-	*(int*)0x10150 = max;
-	*(int*)0x10150 = median;
-	*(int*)0x10150 = average;
+	*(int*)0x11FF8 = min;
+	*(int*)0x11FF8 = max;
+	*(int*)0x11FF8 = median;
+	*(int*)0x11FF8 = average;
 
-	*(int*)0x10150 = his0;
-	*(int*)0x10150 = his1;
-	*(int*)0x10150 = his2;
-	*(int*)0x10150 = his3;
-	*(int*)0x10150 = his4;
-	*(int*)0x10150 = his5;
-	*(int*)0x10150 = his6;
-	*(int*)0x10150 = his7;
-	*(int*)0x10150 = his8;
-	*(int*)0x10150 = his9;
+	*(int*)0x11FF8 = his0;
+	*(int*)0x11FF8 = his1;
+	*(int*)0x11FF8 = his2;
+	*(int*)0x11FF8 = his3;
+	*(int*)0x11FF8 = his4;
+	*(int*)0x11FF8 = his5;
+	*(int*)0x11FF8 = his6;
+	*(int*)0x11FF8 = his7;
+	*(int*)0x11FF8 = his8;
+	*(int*)0x11FF8 = his9;
 
 	
 	while(1){}

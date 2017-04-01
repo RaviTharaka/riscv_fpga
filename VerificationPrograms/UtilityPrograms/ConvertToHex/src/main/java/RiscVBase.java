@@ -20,19 +20,31 @@ public class RiscVBase {
         //System.out.println(arrayList.get(0));
 
 
-        /*
-        * ****************************************
+
+/*        * ****************************************
         * Generate hex code from the initial file
         * */
         ConvertCode convertCode = new ConvertCode();
         ArrayList hexCode = convertCode.ConvertToHexCode(arrayList);
-        /*System.out.println(hexCode.get(0));
-        System.out.println(hexCode.get(1));
-        System.out.println(hexCode.get(2));
-*/
         FileOut fileOut = new FileOut();
         fileOut.writeFile(hexCode);
-        /*****************************************************************/
+
+
+/*        System.out.println(hexCode.get(0));
+        System.out.println(hexCode.get(1));
+        System.out.println(hexCode.get(2));*/
+
+
+        /*
+        ****************************************************************/
+
+
+
+
+       /* DecHex decHex = new DecHex();
+        ArrayList HexCode32Bit = decHex.ConvertToHexCode(arrayList);
+        FileOut fileOut = new FileOut();
+        fileOut.writeFile(HexCode32Bit);*/
 
 
 
