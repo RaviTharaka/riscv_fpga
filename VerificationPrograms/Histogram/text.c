@@ -60,13 +60,12 @@ int main(){
 
 		address+=0x04;
 	}
-	average = sum/1000;
 	
 
 	*(int*)0x11FF8 = min;
 	*(int*)0x11FF8 = max;
 	*(int*)0x11FF8 = median;
-	*(int*)0x11FF8 = average;
+	*(int*)0x11FF8 = sum;
 
 	*(int*)0x11FF8 = his0;
 	*(int*)0x11FF8 = his1;
