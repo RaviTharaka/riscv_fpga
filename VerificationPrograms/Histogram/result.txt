@@ -1,0 +1,8 @@
+sum  4988365 
+min 4 
+max 9997 
+his0 190 
+his1 204 
+his2 225 
+his3 192 
+his4 189 
