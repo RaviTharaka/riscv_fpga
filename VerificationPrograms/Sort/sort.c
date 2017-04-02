@@ -26,8 +26,8 @@ int main() {
 	}
 
 	for(k = 0; k < 10-1; k++){
-		//*(int*)0x10150 =list[k];
-		printf("%d\n",list[k]);
+		*(int*)0x11FF8 =list[k];
+		//printf("%d\n",list[k]);
 	}
 
 	while(1){}

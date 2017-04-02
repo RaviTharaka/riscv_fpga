@@ -6,7 +6,7 @@ int main(){
 
 	for(i=0;i<10;i++){
 	count=i;
-	*(int*)0x10150 = count;
+	*(int*)0x11FF8 = count;
 	//printf("%d", i);
 	}
 

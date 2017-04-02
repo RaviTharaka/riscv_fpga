@@ -12,8 +12,8 @@ Disassembly of section .text:
   10:	fef42623          	sw	a5,-20(s0)
   14:	00200793          	li	a5,2
   18:	fef42423          	sw	a5,-24(s0)
-  1c:	000107b7          	lui	a5,0x10
-  20:	15078793          	addi	a5,a5,336 # 10150 <.L2+0x1011c>
+  1c:	000127b7          	lui	a5,0x12
+  20:	ff878793          	addi	a5,a5,-8 # 11ff8 <.L2+0x11fc4>
   24:	fec42683          	lw	a3,-20(s0)
   28:	fe842703          	lw	a4,-24(s0)
   2c:	00e68733          	add	a4,a3,a4

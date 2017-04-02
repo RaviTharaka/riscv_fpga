@@ -9,7 +9,7 @@ int main () {
         
    for ( i = 0; i < 10; i++ ) {
       n[ i ] = i;
-	*(int*)0x10150 = n[ i ];
+	*(int*)0x11FF8  = n[ i ];
    }
    
 

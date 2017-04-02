@@ -20,7 +20,7 @@ int main(){
     }
 
 	for(k=0;k<sampleCount;k++){
-		*(int*)0x10150 = y[k];
+		*(int*)0x11FF8 = y[k];
 	}
 
     while(1){}
