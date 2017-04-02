@@ -54,7 +54,7 @@ int main(){
 		if(6000<=temp && temp<8000){
 			his3++;
 		}
-		if(8000<=temp && temp<5000){
+		if(8000<=temp && temp<10000){
 			his4++;
 		}
 		address+=0x04;
