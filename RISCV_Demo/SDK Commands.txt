@@ -1,0 +1,2 @@
+dow E:/University/GrandFinale/Project/riscv_fpga/RISCV_Demo/RISCV_Demo.sdk/fsbl/Debug/fsbl.elf
+dow E:/University/GrandFinale/Project/riscv_fpga/RISCV_Demo/RISCV_Demo.sdk/RISCV_Demo_Software/Debug/RISCV_Demo_Software.elf
